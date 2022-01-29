@@ -1,7 +1,6 @@
 //
 // Created by Oran on 27.01.22.
 //
-#include "scanpp.h"
 #include<array>
 #include<iostream>
 #include<string>
