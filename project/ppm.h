@@ -4,28 +4,26 @@
 // based on https://github.com/sol-prog/Perlin_Noise/blob/master/ppm.h
 // but we use an array for the values to make manipulation more efficient
 
-
-#ifndef PPM_H
-#define PPM_H
+#pragma once
+#include "ndarray.h"
 
 class ppm{
     void init();
 
-    unsigned int rows;
-    unsigned int cols;
+    int rows;
+    int cols;
 
 public:
     // r,g,b arrays for each channel
-    // as we have two variable dimensions, we need to declare a pointer to a pointer of arrays
-    unsigned char **r;
-    unsigned char **g;
-    unsigned char **b;
+    ndarray r;
+    ndarray g;
+    ndarray b;
 
 
     //not the same as rows, cols?
-    unsigned int height;
-    unsigned int width;
-    unsigned int maxIntensity;
+    int height;
+    int width;
+    int maxIntensity;
 
     //number of pixels - necessary? - height*width
     unsigned int size;
@@ -40,4 +38,3 @@ public:
     // read the ppm image
     void read(const std::string &fname);
 };
-#endif

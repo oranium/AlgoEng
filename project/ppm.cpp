@@ -8,6 +8,7 @@
 #include <exception>
 
 #include "ppm.h"
+#include "ndarray.h"
 
 // based on https://github.com/sol-prog/Perlin_Noise/blob/master/ppm.h
 // but we use an array for the values to make manipulation more efficient
@@ -18,11 +19,16 @@ void ppm::init(){
     // 1 Byte channel
     maxIntensity= 255;
 }
-
+/*
 ppm::ppm(){
-    init();
-}
+    this->r = ndarray({0, 0});
+    this->g = ndarray({0, 0});
+    this->b = ndarray({0, 0});
 
+    init();
+
+}
+*/
 ppm::ppm(const std::string &fname)
 {
     init();
@@ -30,6 +36,7 @@ ppm::ppm(const std::string &fname)
 }
 
 //TODO: implement
+//Legacy, doesn't work with the ndarray
 ppm::ppm(const unsigned char &r, const unsigned char &g, const unsigned char &b)
 {
     init();
@@ -82,30 +89,23 @@ void ppm::read(const std::string &fname)
         }
         // dynamically create array based on header size
         // r/g/b are pointers to Arrays of pointers of unsigned char (1Byte) Arrays.
-        r = new unsigned char*[rows];
-        g = new unsigned char*[rows];
-        b = new unsigned char*[rows];
-        for(int i=0; i < rows; i++)
-        {
-            r[i] = new unsigned char[cols];
-            g[i] = new unsigned char[cols];
-            b[i] = new unsigned char[cols];
-        }
-
+        r = ndarray({rows, cols});
+        g = ndarray({rows, cols});
+        b = ndarray({rows, cols});
         // this char stores the read input byte
         char aux;
         // each r,g,b values come in that order
-        for(unsigned int i=0; i<rows; i++) {
-            for (unsigned int j = 0; j < cols; j++) {
+        for(int i=0; i<rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 // read 1 bit
                 in.read(&aux, 1);
-                r[i][j] = (unsigned char) aux;
+                r[{i,j}] = (unsigned char) aux;
                 // read 1 bit
                 in.read(&aux, 1);
-                g[i][j] = (unsigned char) aux;
+                g[{i,j}] = (unsigned char) aux;
                 // read 1 bit
                 in.read(&aux, 1);
-                b[i][j] = (unsigned char) aux;
+                b[{i,j}] = (unsigned char) aux;
             }
         }
 
@@ -130,15 +130,15 @@ void ppm::write(const std::string &fname)
 
       // this char stores the output byte to be written
       char helper;
-      for(unsigned int i=0; i<rows; i++)
+      for(int i=0; i<rows; i++)
       {
-          for(unsigned int j=0; j<cols; j++){
+          for(int j=0; j<cols; j++){
               //TODO: why is this casted to char instead of staying unsigned? AKA why is helper char
-              helper = (char) r[i][j];
+              helper = (char) r[{i,j}];
               out.write(&helper, 1);
-              helper = (char) g[i][j];
+              helper = (char) g[{i,j}];
               out.write(&helper, 1);
-              helper = (char) b[i][j];
+              helper = (char) b[{i,j}];
               out.write(&helper, 1);
           }
       }
