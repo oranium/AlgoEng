@@ -25,17 +25,17 @@ public:
     {
     }
 
-    const unsigned char& operator[](int i) const
+    const double& operator[](int i) const
     {
         return m_data.at(i);
     }
 
-    unsigned char& operator[](int i)
+    double& operator[](int i)
     {
         return m_data.at(i);
     }
 
-    const unsigned char& operator[](const std::vector<int>& indices) const
+    const double& operator[](const std::vector<int>& indices) const
     {
         auto flat_index = std::inner_product(
                 indices.begin(), indices.end(),
@@ -43,7 +43,7 @@ public:
         return m_data.at(flat_index);
     }
 
-    unsigned char& operator[](const std::vector<int>& indices)
+    double& operator[](const std::vector<int>& indices)
     {
         auto flat_index = std::inner_product(
                 indices.begin(), indices.end(),
@@ -85,13 +85,33 @@ public:
     {
         return m_nelem;
     }
+    struct Iterator
+    {
+       using iterator_category = std::forward_iterator_tag;
+       using difference_type = std::ptrdiff_t;
+       using value_type = double;
+       using pointer = double*;
+       using reference = double&;
+       Iterator(pointer ptr) : m_ptr(ptr) {}
 
+       reference operator*() const {return *m_ptr;}
+       pointer operator->() {return m_ptr;}
+       Iterator& operator++() {m_ptr++; return *this;}
+       Iterator operator++(int) {Iterator tmp = *this; ++(*this); return tmp;}
+
+       friend bool operator== (const Iterator& a, const Iterator& b) {return a.m_ptr == b.m_ptr;}
+       friend bool operator!= (const Iterator& a, const Iterator& b) {return a.m_ptr != b.m_ptr;}
+    private:
+        pointer m_ptr;
+    };
+    Iterator begin() {return Iterator(&m_data[0]);}
+    Iterator end() {return Iterator(&m_data[m_nelem]);}
 private:
     int m_ndim;
     int m_nelem;
     std::vector<int> m_shape;
     std::vector<int> m_strides;
-    std::vector<unsigned char> m_data;
+    std::vector<double> m_data;
 
     void compute_strides()
     {
