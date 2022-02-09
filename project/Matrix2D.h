@@ -9,6 +9,8 @@
 #include <array>
 #include <iostream>
 
+typedef std::array<int, 4> Slice;
+
 class Matrix2D
 {
 public:
@@ -59,7 +61,7 @@ public:
      * Does not check for violations of memory access
      * Returns value so the local slice isn't lost
      */
-    const std::vector<double> operator[](std::array<int, 4>& indices) const
+    const std::vector<double> operator[](Slice& indices) const
     {
         int startRow = indices[0];
         int endRow = indices[1];
@@ -77,7 +79,7 @@ public:
         return slice;
     }
 
-    std::vector<double> operator[](std::array<int, 4>& indices)
+    std::vector<double> operator[](Slice& indices)
     {
         int startRow = indices[0];
         int endRow = indices[1];
