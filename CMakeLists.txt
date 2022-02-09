@@ -14,7 +14,7 @@ find_package(OpenMP REQUIRED)
 add_executable(repo
         answers/warmup/1/hello.cpp answers/warmup/4/pi_singleline_parallel.cpp answers/warmup/4/pi_parallel_standard_cpp.cpp project/read_ppm.h project/read_ppm.cpp)
 add_executable(project
-        project/read_ppm.h project/read_ppm.cpp)
+        project/read_ppm.h project/read_ppm.cpp project/filter.cpp project/filter.h)
 
 target_link_libraries(repo PUBLIC OpenMP::OpenMP_CXX)
 target_link_libraries(project PUBLIC OpenMP::OpenMP_CXX)
