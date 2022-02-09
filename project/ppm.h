@@ -5,7 +5,7 @@
 // but we use an array for the values to make manipulation more efficient
 
 #pragma once
-#include "ndarray.h"
+#include "Matrix2D.h"
 
 class ppm{
     void init();
@@ -15,9 +15,9 @@ class ppm{
 
 public:
     // r,g,b arrays for each channel
-    ndarray r;
-    ndarray g;
-    ndarray b;
+    Matrix2D r;
+    Matrix2D g;
+    Matrix2D b;
 
 
     //not the same as rows, cols?

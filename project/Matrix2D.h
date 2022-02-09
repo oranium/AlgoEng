@@ -5,11 +5,14 @@
 #include <vector>
 #include <numeric>
 #include <functional>
+#include <valarray>
+#include <array>
+#include <iostream>
 
-class ndarray
+class Matrix2D
 {
 public:
-    ndarray(const std::vector<int>& shape)
+    Matrix2D(const std::vector<int>& shape)
             : m_nelem(std::accumulate(shape.begin(), shape.end(),
                                       1, std::multiplies<int>()))
             , m_ndim(shape.size())
@@ -18,10 +21,10 @@ public:
         compute_strides();
         m_data.resize(m_nelem, 0.0);
     }
-    ndarray()
+    Matrix2D()
     {
     }
-    ~ndarray()
+    ~Matrix2D()
     {
     }
 
@@ -49,6 +52,48 @@ public:
                 indices.begin(), indices.end(),
                 m_strides.begin(), 0);
         return m_data.at(flat_index);
+    }
+
+    /*
+     * Returns a flat std::vector of the slice in row major
+     * Does not check for violations of memory access
+     * Returns value so the local slice isn't lost
+     */
+    const std::vector<double> operator[](std::array<int, 4>& indices) const
+    {
+        int startRow = indices[0];
+        int endRow = indices[1];
+        int startCol = indices[2];
+        int endCol = indices[3];
+        std::vector<double> slice;
+        for (int i=startRow;i<endRow;++i)
+        {
+            for (int j=startCol;i<endCol;i++)
+            {
+                std::cout << m_data.at(j+m_strides.at(0)*i) <<std::endl;
+                slice.push_back(m_data.at(i+m_strides.at(0)*j));
+            }
+        }
+        return slice;
+    }
+
+    std::vector<double> operator[](std::array<int, 4>& indices)
+    {
+        int startRow = indices[0];
+        int endRow = indices[1];
+        int startCol = indices[2];
+        int endCol = indices[3];
+        std::vector<double> slice;
+
+        for (int i=startRow;i<endRow;++i)
+        {
+            for (int j=startCol;i<endCol;i++)
+            {
+                std::cout << m_data.at(j+m_strides.at(0)*i) <<std::endl;
+                slice.push_back(m_data.at(i+m_strides.at(0)*j));
+            }
+        }
+        return slice;
     }
 
     void reshape(const std::vector<int>& new_shape)
