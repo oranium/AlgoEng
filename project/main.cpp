@@ -15,21 +15,11 @@ int main() {
     std::string output = "/Users/Oran/Documents/Master/WS21/algo_engineering/repo/output_p6.ppm";
     ppm img(path);
     Matrix2D filter({3,3});
-    short i = 0;
-    for(auto elem:filter)
-    {
-        filter[i] = i;
-        ++i;
-    }
-    std::array<int, 4> slice{0,1,1,2};
-    const std::vector<double>& lol =  filter[slice];
-    std::cout << lol.size() << std::endl;
+    std::fill(filter.begin(), filter.end(), 1.0/filter.nelem());
 
-    std::cout << "----SLICE ELEMENTS PART 2----" << std::endl;
-    for(auto elem:lol)
-    {
-        std::cout << elem << std::endl;
-    }
-    img.write(output);
+    Matrix2D convImg = ppmConvolveBW(filter, img);
+    ppm imgCvd(convImg, convImg, convImg);
+    imgCvd.normalize();
+    imgCvd.write(output);
     return 0;
 }

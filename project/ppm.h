@@ -32,9 +32,11 @@ public:
     // fill
     ppm(const std::string &fname);
     // construct ppm from r g b channels
-    ppm(const unsigned char &r, const unsigned char &g, const unsigned char &b);
+    ppm(Matrix2D &r, Matrix2D &g, Matrix2D &b);
     // write the ppm image
     void write(const std::string &fname);
     // read the ppm image
     void read(const std::string &fname);
+
+    void normalize(double newMax=255.0);
 };
