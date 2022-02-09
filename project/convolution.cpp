@@ -55,8 +55,11 @@ Matrix2D convolve(Matrix2D& filter, Matrix2D& img)
         {
             Slice slice{i,i+dimFilter, j,j+dimFilter};
             std::vector<double> imageSlice = paddedImg[slice];
-            double newVal = std::inner_product(imageSlice.begin(), imageSlice.end(), filter.begin(), 0);
-
+            double newVal = 0;
+            for(int i=0;i<imageSlice.size();i++)
+            {
+                newVal += imageSlice.at(i) * filter[i];
+            }
             convolvedImg[{i,j}] = newVal;
         }
     }
