@@ -5,4 +5,4 @@
 #include "Matrix2D.h"
 #include "ppm.h"
 
-Matrix2D ppmConvolveBW(Matrix2D& filter, ppm& img);
+Matrix2D convolve(Matrix2D& filter, Matrix2D& img);
