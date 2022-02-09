@@ -8,7 +8,7 @@
 #include <exception>
 
 #include "ppm.h"
-#include "ndarray.h"
+#include "Matrix2D.h"
 
 // based on https://github.com/sol-prog/Perlin_Noise/blob/master/ppm.h
 // but we use an array for the values to make manipulation more efficient
@@ -21,9 +21,9 @@ void ppm::init(){
 }
 /*
 ppm::ppm(){
-    this->r = ndarray({0, 0});
-    this->g = ndarray({0, 0});
-    this->b = ndarray({0, 0});
+    this->r = Matrix2D({0, 0});
+    this->g = Matrix2D({0, 0});
+    this->b = Matrix2D({0, 0});
 
     init();
 
@@ -36,7 +36,7 @@ ppm::ppm(const std::string &fname)
 }
 
 //TODO: implement
-//Legacy, doesn't work with the ndarray
+//Legacy, doesn't work with the Matrix2D
 ppm::ppm(const unsigned char &r, const unsigned char &g, const unsigned char &b)
 {
     init();
@@ -89,9 +89,9 @@ void ppm::read(const std::string &fname)
         }
         // dynamically create array based on header size
         // r/g/b are pointers to Arrays of pointers of unsigned char (1Byte) Arrays.
-        r = ndarray({rows, cols});
-        g = ndarray({rows, cols});
-        b = ndarray({rows, cols});
+        r = Matrix2D({rows, cols});
+        g = Matrix2D({rows, cols});
+        b = Matrix2D({rows, cols});
         // this char stores the read input byte
         char aux;
         // each r,g,b values come in that order
