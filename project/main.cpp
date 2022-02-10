@@ -11,28 +11,28 @@
 #include "filter.h"
 #include "convolution.h"
 
+
 int main() {
-    std::string path = "/Users/brunoreinhold/FSU/AlgoEng/project/test_p6.ppm";
+    std::string path = "/Users/brunoreinhold/FSU/AlgoEng/project/IMG_5077.ppm";
     std::string output = "/Users/brunoreinhold/FSU/AlgoEng/project/out_test_p6.ppm";
     ppm img(path);
 
     Matrix2D filter({3,3});
-    short i = 0;
-    for(auto elem:filter)
-    {
-        filter[i] = i;
-        ++i;
-    }
-    std::array<int, 4> slice{0,1,1,2};
-    const std::vector<double>& lol =  filter[slice];
-    std::cout << lol.size() << std::endl;
+    std::fill(filter.begin(), filter.end(), 1.0/filter.nelem());
 
-    std::cout << "----SLICE ELEMENTS PART 2----" << std::endl;
-    for(auto elem:lol)
-    {
-        std::cout << elem << std::endl;
-    }
 
-    img.write(output);
+    Matrix2D r_blurr = gaussFilter(img.r, 5,1);
+    Matrix2D g_blurr = gaussFilter(img.g,5 ,1);
+    Matrix2D b_blurr = gaussFilter(img.b, 5,1);
+
+    Matrix2D r = sigmaFilter(img.r, r_blurr);
+    Matrix2D g = sigmaFilter(img.g, g_blurr);
+    Matrix2D b = sigmaFilter(img.b, b_blurr);
+
+
+    ppm imgCvd(r, g, b);
+
+    imgCvd.normalize();
+    imgCvd.write(output);
     return 0;
 }

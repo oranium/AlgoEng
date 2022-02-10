@@ -7,59 +7,61 @@
 #include <iostream>
 #include "ppm.h"
 #include "Matrix2D.h"
-#include <valarray>
 
-Matrix2D ppmConvolveBW(Matrix2D& filter, const ppm& img)
+Matrix2D convolve(Matrix2D& filter, Matrix2D& img)
 {
-    const int size = filter.nelem();
     // floor division
-    const int sizePad = std::floor(size/2);
-    const int rowsPad = img.height + sizePad;
-    const int colsPad = img.width + sizePad;
+    // only square filters
+    const int dimFilter = filter.shape()[0];
+    const int sizePad = std::floor(filter.shape().at(0)/2);
+    const int rowsPad = img.shape()[0] + 2*sizePad;
+    const int colsPad = img.shape()[1] + 2*sizePad;
     Matrix2D paddedImg({rowsPad, colsPad});
-    Matrix2D convolvedImg({img.height, img.width});
-    std::vector<double> flat_filter;
-    for (double elem: filter){
-        flat_filter.push_back(elem);
-    }
+    Matrix2D convolvedImg(img.shape());
+
     // create the padded image
     // we are zero padding
     // borders along the rows
-    for (int i=0;i<img.width;i++)
+    //std::fill(paddedImg.begin(), paddedImg.end(), 0);
+    for (int i=0;i<sizePad;i++)
     {
-        for (int j=0; j<sizePad;j++) {
-            paddedImg[{0, j}] = 0;
-            paddedImg[{(img.height - 1) - j, i}] = 0;
+        for (int j=0; j<img.shape()[1];j++) {
+            paddedImg[{i, j}] = 0.0;
+            paddedImg[{(img.shape()[0] - 1) - i, j}] = 0.0;
         }
     }
+
     // borders along the cols
-    for(int i=0;i<img.height;i++)
+    for(int i=0;i<img.shape()[0];i++)
     {
         for (int j=0; j<sizePad;j++)
         {
-            paddedImg[{i,j}] = 0;
-            paddedImg[{i,(img.width - 1) - j}] = 0;
+            paddedImg[{i, (img.shape()[1]-1)-j}] = 0.0;
+            paddedImg[{i,j}] = 0.0;
         }
     }
     // the image
-    for (int i=sizePad; i<img.height; i++)
+    for (int i=sizePad; i<img.shape()[0]; i++)
     {
-        for (int j=sizePad; j<img.width;j++)
+        for (int j=sizePad; j<img.shape()[1];j++)
         {
-            paddedImg[{i,j}] = (0.2989 * img.r[{i,j}] + 0.5870*img.g[{i,j}] + 0.1140*img.b[{i,j}]);
+            paddedImg[{i,j}] = img[{i,j}];
         }
     }
     // apply convolution
-    for (int i=0; i<img.height; ++i)
+    for (int i=0; i<img.shape()[0]; ++i)
     {
-        for (int j=0; i<img.width; ++j)
+        for (int j=0; j<img.shape()[1]; ++j)
         {
-            Slice slice{i,i+sizePad, j,j+sizePad};
+            Slice slice{i,i+dimFilter, j,j+dimFilter};
             std::vector<double> imageSlice = paddedImg[slice];
-            convolvedImg[{i,j}] = std::inner_product(imageSlice.begin(), imageSlice.end(), filter.begin(), 0);
+            double newVal = 0;
+            for(int i=0;i<imageSlice.size();i++)
+            {
+                newVal += imageSlice.at(i) * filter[i];
+            }
+            convolvedImg[{i,j}] = newVal;
         }
     }
-
-
     return convolvedImg;
 }

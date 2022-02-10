@@ -67,13 +67,13 @@ public:
         int endRow = indices[1];
         int startCol = indices[2];
         int endCol = indices[3];
+
         std::vector<double> slice;
         for (int i=startRow;i<endRow;++i)
         {
-            for (int j=startCol;i<endCol;i++)
+            for (int j=startCol;j<endCol;j++)
             {
-                std::cout << m_data.at(j+m_strides.at(0)*i) <<std::endl;
-                slice.push_back(m_data.at(i+m_strides.at(0)*j));
+                slice.push_back(m_data.at(i*m_strides.at(0)+j));
             }
         }
         return slice;
@@ -86,13 +86,12 @@ public:
         int startCol = indices[2];
         int endCol = indices[3];
         std::vector<double> slice;
-
+        // 2,4 ; 0,3
         for (int i=startRow;i<endRow;++i)
         {
-            for (int j=startCol;i<endCol;i++)
+            for (int j=startCol;j<endCol;j++)
             {
-                std::cout << m_data.at(j+m_strides.at(0)*i) <<std::endl;
-                slice.push_back(m_data.at(i+m_strides.at(0)*j));
+                slice.push_back(m_data.at(i*(m_strides.at(0))+j));
             }
         }
         return slice;
@@ -132,6 +131,21 @@ public:
     {
         return m_nelem;
     }
+    std::array<double,2> minmax_element()
+    {
+        std::array<double,2> minmax{MAXFLOAT,0};
+        for(auto elem:m_data)
+        {
+            if(elem<minmax[0]){
+                minmax[0]=elem;
+            }
+            if(elem>minmax[1]){
+                minmax[1]=elem;
+            }
+        }
+        return minmax;
+    }
+
     struct Iterator
     {
        using iterator_category = std::forward_iterator_tag;
@@ -153,6 +167,15 @@ public:
     };
     Iterator begin() {return Iterator(&m_data[0]);}
     Iterator end() {return Iterator(&m_data[m_nelem]);}
+    void print(){
+        int i=0;
+        for(auto elem: m_data)
+        {
+            std::cout << elem << " ";
+            i++;
+            if(i%m_shape[0]==0) std::cout << std::endl;
+        }
+    }
 private:
     int m_ndim;
     int m_nelem;

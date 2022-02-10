@@ -35,11 +35,17 @@ ppm::ppm(const std::string &fname)
     read(fname);
 }
 
-//TODO: implement
-//Legacy, doesn't work with the Matrix2D
-ppm::ppm(const unsigned char &r, const unsigned char &g, const unsigned char &b)
+ppm::ppm(Matrix2D &r, Matrix2D &g, Matrix2D &b)
 {
     init();
+    height = r.shape()[0];
+    width = r.shape()[1];
+    rows = height;
+    cols = width;
+    this->r = r;
+    this->g = g;
+    this->b = b;
+    //maxIntensity = 255;
 }
 
 void ppm::read(const std::string &fname)
@@ -116,7 +122,11 @@ void ppm::read(const std::string &fname)
     }
     in.close();
 }
-
+/*
+ * Write values in RGB channels to valid PPM File
+ * intensity values over 255 are UB (undefined behavior) -> call ppm::normalize first
+ * TODO: be able to write values over 255 (up to 2 Byte=65535)
+ */
 void ppm::write(const std::string &fname)
 {
     std::ofstream out(fname.c_str(), std::ios::out | std::ios::binary);
@@ -134,11 +144,11 @@ void ppm::write(const std::string &fname)
       {
           for(int j=0; j<cols; j++){
               //TODO: why is this casted to char instead of staying unsigned? AKA why is helper char
-              helper = (char) r[{i,j}];
+              helper = static_cast<char>((int)std::round(r[{i,j}]));
               out.write(&helper, 1);
-              helper = (char) g[{i,j}];
+              helper = static_cast<char>((int)std::round(r[{i,j}]));
               out.write(&helper, 1);
-              helper = (char) b[{i,j}];
+              helper = static_cast<char>((int)std::round(r[{i,j}]));
               out.write(&helper, 1);
           }
       }
@@ -147,5 +157,36 @@ void ppm::write(const std::string &fname)
         std::cout << "Error: Unable to open " << fname << std::endl;
     }
     out.close();
+}
+
+void ppm::normalize(double newMax)
+{
+    const std::array<double,2> minMaxR = r.minmax_element();
+    const std::array<double,2> minMaxG = g.minmax_element();
+    const std::array<double,2> minMaxB = b.minmax_element();
+
+    std::cout << std::endl;
+    std::transform(r.begin(), r.end(), r.begin(),
+       [&](double elem)->double
+        {
+        auto min = minMaxR[0];
+        auto max = minMaxR[1];
+        return (newMax * (elem - min) / (max - min));
+        });
+    std::transform(g.begin(), g.end(), g.begin(),
+                   [&](auto elem)->double
+                   {
+                       auto min = minMaxG[0];
+                       auto max = minMaxG[1];
+                       return (newMax * (elem - min) / (max - min));
+                   });
+    std::transform(b.begin(), b.end(), b.begin(),
+                   [&](auto elem)->double
+                   {
+                       auto min = minMaxB[0];
+                       auto max = minMaxB[1];
+                       return (newMax * (elem - min) / (max - min));
+                   });
+
 }
 
