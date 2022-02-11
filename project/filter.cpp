@@ -14,7 +14,7 @@ Matrix2D gaussFilter(Matrix2D& img, int size, double sig)
 {
 
     // define Gauss filter
-    Matrix2D gauss_filter({size, size});
+    std::vector<double> gauss_filter(size);
 
     int half_size = floor(size/2);
     int r, s = half_size * sig * sig;
@@ -22,19 +22,23 @@ Matrix2D gaussFilter(Matrix2D& img, int size, double sig)
 
     //generate Gauss values
     for (int i = -half_size; i <= half_size; i++) {
-        for (int j = -half_size; j <= half_size; j++) {
-            r = sqrt(i * i + j * j);
-            gauss_filter[{i + half_size, j + half_size}]  = (exp(-(r * r) / s)) / (M_PI * s);
-            sum += gauss_filter[{i + half_size, j + half_size}];
-        }
+            gauss_filter[i + half_size]  = 1/(sqrt(2 * M_PI) * sig) * (exp(-(i*i) / (2*s*s)));
+            sum += gauss_filter[i + half_size];
     }
-    //normalize and copy
-    for (int i = 0; i < size; ++i){
-        for (int j = 0; j < size; ++j) {
-            gauss_filter[{i, j}] /= sum;
-        }
-    }
-    return convolve(gauss_filter,  img);
+    //normalize
+    std::transform(gauss_filter.begin(), gauss_filter.end(), gauss_filter.begin(),
+                   [&](auto elem)->double {return elem/sum;});
+    Matrix2D gaussianBlurredHorizontal = convolve1D(gauss_filter,  img);
+    Matrix2D gaussianBlurredVertical({gaussianBlurredHorizontal.shape()[1], gaussianBlurredHorizontal.shape()[0]});
+    // transpose the matrix to avoid cache misses for 'vertical' access
+    transpose(gaussianBlurredHorizontal, gaussianBlurredVertical);
+    // horizontal convolution on transposed matrix
+    // equivalent to vertical convolution on original matrix
+    gaussianBlurredVertical = convolve1D(gauss_filter, img);
+    // transpose back to original shape
+    transpose(gaussianBlurredVertical, gaussianBlurredHorizontal);
+
+    return gaussianBlurredVertical;
 }
 
 Matrix2D sigmaFilter(Matrix2D& img, Matrix2D& blurred_image)

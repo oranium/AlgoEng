@@ -15,10 +15,11 @@
 int main(int argc, char *argv[]) {
     std::string path = argv[1];
     std::string output;
-    std::cout << argc;
+    std::cout << argc << std::endl;
     if(argc>2)
     {
         output = argv[2];
+        std::cout << "Output: " << argv[2] << std::endl;
     }
     else
     {
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
 
 
     Matrix2D r_blurr = gaussFilter(img.r, 5,1);
-    Matrix2D g_blurr = gaussFilter(img.g,5 ,1);
+    Matrix2D g_blurr = gaussFilter(img.g,5,1);
     Matrix2D b_blurr = gaussFilter(img.b, 5,1);
 
     Matrix2D r = sigmaFilter(img.r, r_blurr);

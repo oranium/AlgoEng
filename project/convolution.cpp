@@ -55,13 +55,51 @@ Matrix2D convolve(Matrix2D& filter, Matrix2D& img)
         {
             Slice slice{i,i+dimFilter, j,j+dimFilter};
             std::vector<double> imageSlice = paddedImg[slice];
-            double newVal = 0;
+            double newVal = std::inner_product(imageSlice.begin(), imageSlice.end(), filter.begin(), 0);
+            /*
             for(int i=0;i<imageSlice.size();i++)
             {
                 newVal += imageSlice.at(i) * filter[i];
             }
+             */
             convolvedImg[{i,j}] = newVal;
         }
     }
     return convolvedImg;
 }
+
+Matrix2D convolve1D(std::vector<double> filter, Matrix2D& img)
+{
+    // floor division
+    // only square filters
+    const int dimFilter = filter.size();
+    std::vector<double>flatImg = img.flat();
+    std::vector<double>paddedImg;
+    const int sizePad = std::floor(filter.size()/2);
+    // reserve space so no reallocation happens on filling
+    paddedImg.reserve(flatImg.size() + 2*sizePad);
+    Matrix2D convolvedImg(img.shape());
+
+    // create the padded image
+    // we are zero padding
+    for (int i=0; i<sizePad;i++)
+    {
+        paddedImg.push_back(0);
+    }
+    for (auto elem:flatImg)
+    {
+        paddedImg.push_back(elem);
+    }
+    for (int i=0; i<sizePad;i++)
+    {
+        paddedImg.push_back(0);
+    }
+    // apply convolution
+    for (int i=0; i<flatImg.size(); ++i)
+    {
+            convolvedImg[i] = std::inner_product((flatImg.begin()+i), (flatImg.begin()+i+filter.size())
+                                                     , filter.begin(), 0);
+    }
+    return convolvedImg;
+}
+
