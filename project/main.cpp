@@ -12,9 +12,18 @@
 #include "convolution.h"
 
 
-int main() {
-    std::string path = "/Users/brunoreinhold/FSU/AlgoEng/project/IMG_5077.ppm";
-    std::string output = "/Users/brunoreinhold/FSU/AlgoEng/project/out_test_p6.ppm";
+int main(int argc, char *argv[]) {
+    std::string path = argv[1];
+    std::string output;
+    std::cout << argc;
+    if(argc>2)
+    {
+        output = argv[2];
+    }
+    else
+    {
+        output = "./output.ppm";
+    }
     ppm img(path);
 
     Matrix2D filter({3,3});
