@@ -6,12 +6,13 @@
 #include <fstream>
 #include <sstream>
 #include <exception>
-
+#include <algorithm> // std::minmax_element
+#include <utility>
 #include "ppm.h"
 #include "Matrix2D.h"
 
 // based on https://github.com/sol-prog/Perlin_Noise/blob/master/ppm.h
-// but we use an array for the values to make manipulation more efficient
+// working
 
 void ppm::init(){
     width = 0;
@@ -35,16 +36,18 @@ ppm::ppm(const std::string &fname)
     read(fname);
 }
 
-ppm::ppm(Matrix2D &r, Matrix2D &g, Matrix2D &b)
+ppm::ppm(std::vector<double> r, std::vector<double> g, std::vector<double> b, const int &N, const int &M)
 {
     init();
-    height = r.shape()[0];
-    width = r.shape()[1];
+    height = N;
+    width = M;
     rows = height;
     cols = width;
-    this->r = r;
-    this->g = g;
-    this->b = b;
+    // clang-tidy told me std::move is cheaper than copying
+    this->r = std::move(r);
+    this->g = std::move(g);
+    this->b = std::move(b);
+    //already defined in init()
     //maxIntensity = 255;
 }
 
@@ -95,23 +98,24 @@ void ppm::read(const std::string &fname)
         }
         // dynamically create array based on header size
         // r/g/b are pointers to Arrays of pointers of unsigned char (1Byte) Arrays.
-        r = Matrix2D({rows, cols});
-        g = Matrix2D({rows, cols});
-        b = Matrix2D({rows, cols});
+        r.reserve(rows*cols);
+        g.reserve(rows*cols);
+        b.reserve(rows*cols);
         // this char stores the read input byte
         char aux;
         // each r,g,b values come in that order
         for(int i=0; i<rows; i++) {
             for (int j = 0; j < cols; j++) {
+                int idx = i*cols + j;
                 // read 1 bit
                 in.read(&aux, 1);
-                r[{i,j}] = (unsigned char) aux;
+                r[idx] = ((double) aux);
                 // read 1 bit
                 in.read(&aux, 1);
-                g[{i,j}] = (unsigned char) aux;
+                g[idx] = ((double) aux);
                 // read 1 bit
                 in.read(&aux, 1);
-                b[{i,j}] = (unsigned char) aux;
+                b[idx] = ((double) aux);
             }
         }
 
@@ -144,11 +148,11 @@ void ppm::write(const std::string &fname)
       {
           for(int j=0; j<cols; j++){
               //TODO: why is this casted to char instead of staying unsigned? AKA why is helper char
-              helper = static_cast<char>((int)std::round(r[{i,j}]));
+              helper = static_cast<char>((int)std::round(r[i*cols+j]));
               out.write(&helper, 1);
-              helper = static_cast<char>((int)std::round(r[{i,j}]));
+              helper = static_cast<char>((int)std::round(g[i*cols+j]));
               out.write(&helper, 1);
-              helper = static_cast<char>((int)std::round(r[{i,j}]));
+              helper = static_cast<char>((int)std::round(b[i*cols+j]));
               out.write(&helper, 1);
           }
       }
@@ -161,32 +165,18 @@ void ppm::write(const std::string &fname)
 
 void ppm::normalize(double newMax)
 {
-    const std::array<double,2> minMaxR = r.minmax_element();
-    const std::array<double,2> minMaxG = g.minmax_element();
-    const std::array<double,2> minMaxB = b.minmax_element();
+    const auto [minR, maxR] = std::minmax_element(r.begin(), r.end());
+    const auto [minG, maxG] = std::minmax_element(g.begin(), g.end());
+    const auto [minB, maxB] = std::minmax_element(b.begin(), b.end());
 
-    std::cout << std::endl;
     std::transform(r.begin(), r.end(), r.begin(),
-       [&](double elem)->double
-        {
-        auto min = minMaxR[0];
-        auto max = minMaxR[1];
-        return (newMax * (elem - min) / (max - min));
-        });
-    std::transform(g.begin(), g.end(), g.begin(),
-                   [&](auto elem)->double
-                   {
-                       auto min = minMaxG[0];
-                       auto max = minMaxG[1];
-                       return (newMax * (elem - min) / (max - min));
-                   });
-    std::transform(b.begin(), b.end(), b.begin(),
-                   [&](auto elem)->double
-                   {
-                       auto min = minMaxB[0];
-                       auto max = minMaxB[1];
-                       return (newMax * (elem - min) / (max - min));
-                   });
-
+       [&, minR=minR, maxR=maxR](double elem)->double
+        {return (newMax * (elem - *minR) / (*maxR - *minR));});
+    std::transform(r.begin(), r.end(), r.begin(),
+                   [&, minG=minG, maxG=maxG](double elem)->double
+                   {return (newMax * (elem - *minG) / (*maxG - *minG));});
+    std::transform(r.begin(), r.end(), r.begin(),
+                   [&, minB=minB, maxB=maxB](double elem)->double
+                   {return (newMax * (elem - *minB) / (*maxB - *minB));});
 }
 

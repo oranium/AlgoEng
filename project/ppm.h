@@ -15,9 +15,9 @@ class ppm{
 
 public:
     // r,g,b arrays for each channel
-    Matrix2D r;
-    Matrix2D g;
-    Matrix2D b;
+    std::vector<double> r;
+    std::vector<double> g;
+    std::vector<double> b;
 
 
     //not the same as rows, cols?
@@ -32,7 +32,7 @@ public:
     // fill
     ppm(const std::string &fname);
     // construct ppm from r g b channels
-    ppm(Matrix2D &r, Matrix2D &g, Matrix2D &b);
+    ppm(std::vector<double> r, std::vector<double> g, std::vector<double> b, const int &N, const int &M);
     // write the ppm image
     void write(const std::string &fname);
     // read the ppm image
