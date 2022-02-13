@@ -23,15 +23,14 @@ std::array<double, 2> Matrix2D::minmax_element()
 /*
  * Store transpose of src in dst
  */
-void transpose(Matrix2D &src, Matrix2D &dst)
+void transpose(const std::vector<double>& src, std::vector<double>& dst, int N, int M)
 {
     // transpose over
-    int N = src.shape()[0];
-    int M = src.shape()[1];
     for(int n=0; n<N*M; n++)
     {
-        int i = n/N;
-        int j = n%N;
-        dst[n] = src[M*j + i];
+        int i = n / N;
+        int j = n % N;
+        dst[n] = src[M * j + i];
+
     }
 }

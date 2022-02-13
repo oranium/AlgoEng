@@ -183,5 +183,5 @@ private:
 
 
 };
-void transpose(Matrix2D &src, Matrix2D &dst);
+void transpose(const std::vector<double>& src, std::vector<double>& dst, int N, int M);
 
