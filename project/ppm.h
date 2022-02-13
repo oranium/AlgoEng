@@ -38,5 +38,5 @@ public:
     // read the ppm image
     void read(const std::string &fname);
 
-    void normalize(double newMax=255.0);
+    void normalize(int newMax=255);
 };

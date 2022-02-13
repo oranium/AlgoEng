@@ -164,7 +164,7 @@ void ppm::write(const std::string &fname)
     out.close();
 }
 
-void ppm::normalize(double newMax)
+void ppm::normalize(int newMax)
 {
     const auto [minR, maxR] = std::minmax_element(r.begin(), r.end());
     const auto [minG, maxG] = std::minmax_element(g.begin(), g.end());
@@ -173,9 +173,11 @@ void ppm::normalize(double newMax)
     std::transform(r.begin(), r.end(), r.begin(),
        [&, minR=minR, maxR=maxR](double elem)->double
         {return (newMax * (elem - *minR) / (*maxR - *minR));});
+
     std::transform(r.begin(), r.end(), r.begin(),
                    [&, minG=minG, maxG=maxG](double elem)->double
                    {return (newMax * (elem - *minG) / (*maxG - *minG));});
+
     std::transform(r.begin(), r.end(), r.begin(),
                    [&, minB=minB, maxB=maxB](double elem)->double
                    {return (newMax * (elem - *minB) / (*maxB - *minB));});
