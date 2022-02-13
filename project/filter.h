@@ -8,8 +8,8 @@
 #endif //PROJECT_FILTER_H
 #include "Matrix2D.h"
 
-Matrix2D gaussFilter(Matrix2D& img, int size, double sig);
-Matrix2D sigmaFilter(Matrix2D& img, Matrix2D& blurred_image);
-Matrix2D meanFilter(Matrix2D& img, int size);
-Matrix2D removeBackground(Matrix2D& img, Matrix2D& filtered_img);
+std::vector<double> gaussFilter(std::vector<double>& img, int size, double sig, const int N, const int M);
+std::vector<double> sigmaFilter(std::vector<double>& img, std::vector<double> blurred_image);
+std::vector<double> meanFilter(std::vector<double>& img, int size);
+std::vector<double> removeBackground(std::vector<double>& img, std::vector<double> filtered_img);
 

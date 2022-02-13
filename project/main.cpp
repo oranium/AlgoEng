@@ -10,39 +10,66 @@
 #include "ppm.h"
 #include "filter.h"
 #include "convolution.h"
-
+#include <random>
 
 int main(int argc, char *argv[]) {
+    clock_t tStart = clock();
     std::string path = argv[1];
+    std::cout << "Removing background for image " << path << std::endl;
     std::string output;
     std::cout << argc << std::endl;
     if(argc>2)
     {
         output = argv[2];
-        std::cout << "Output: " << argv[2] << std::endl;
     }
     else
     {
         output = "./output.ppm";
     }
+    std::cout << "Writing to " << output << std::endl;
+
+    std::vector<double> filter{1.0/3, 1.0/3, 1.0/3};
+
     ppm img(path);
 
-    Matrix2D filter({3,3});
-    std::fill(filter.begin(), filter.end(), 1.0/filter.nelem());
+    std::vector<double> convRT;
+    convRT.resize(img.size);
+    transpose(img.r, convRT, img.height, img.width);
+    convRT = convolve1D(filter, convRT, img.width, img.height);
+    std::vector<double> convR;
+    convR.resize(img.size);
+    transpose(convRT, convR, img.width, img.height);
+    convR = convolve1D(filter, convR, img.height, img.width);
 
+    std::vector<double> convGT;
+    convGT.resize(img.size);
+    transpose(img.g, convGT, img.height, img.width);
+    convGT = convolve1D(filter, convGT, img.width, img.height);
+    std::vector<double> convG;
+    convG.resize(img.size);
+    transpose(convGT, convG, img.width, img.height);
+    convG = convolve1D(filter, convG, img.height, img.width);
 
-    Matrix2D r_blurr = gaussFilter(img.r, 5,1);
-    Matrix2D g_blurr = gaussFilter(img.g,5,1);
-    Matrix2D b_blurr = gaussFilter(img.b, 5,1);
+    std::vector<double> convBT;
+    convBT.resize(img.size);
+    transpose(img.b, convBT, img.height, img.width);
+    convBT = convolve1D(filter, convBT, img.width, img.height);
+    std::vector<double> convB;
+    convB.resize(img.size);
+    transpose(convBT, convB, img.width, img.height);
+    convB = convolve1D(filter, convB, img.height, img.width);
 
-    Matrix2D r = sigmaFilter(img.r, r_blurr);
-    Matrix2D g = sigmaFilter(img.g, g_blurr);
-    Matrix2D b = sigmaFilter(img.b, b_blurr);
+    std::vector<double> r_blur = gaussFilter(img.r, 5, 1, img.height, img.width);
+    std::vector<double> g_blur = gaussFilter(img.g,5,1, img.height, img.width);
+    std::vector<double> b_blur = gaussFilter(img.b, 5,1, img.height, img.width);
 
-
-    ppm imgCvd(r, g, b);
+    std::vector<double> r = sigmaFilter(img.r, r_blur);
+    std::vector<double> g = sigmaFilter(img.g, g_blur);
+    std::vector<double> b = sigmaFilter(img.b, b_blur);
+    ppm imgCvd(r, g, b, img.height, img.width);
 
     imgCvd.normalize();
     imgCvd.write(output);
+    std::cout << "Time taken: " << (clock() - tStart)/CLOCKS_PER_SEC << std::endl;
     return 0;
 }

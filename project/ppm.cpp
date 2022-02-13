@@ -36,13 +36,14 @@ ppm::ppm(const std::string &fname)
     read(fname);
 }
 
-ppm::ppm(std::vector<double> r, std::vector<double> g, std::vector<double> b, const int &N, const int &M)
+ppm::ppm(std::vector<double> r, std::vector<double> g, std::vector<double> b, const int N, const int M)
 {
     init();
     height = N;
     width = M;
     rows = height;
     cols = width;
+    size = height * width;
     // clang-tidy told me std::move is cheaper than copying
     this->r = std::move(r);
     this->g = std::move(g);
@@ -79,6 +80,7 @@ void ppm::read(const std::string &fname)
             dimensions >> height;
             rows = height;
             cols = width;
+            size = height * width;
         }
         catch(std::exception &e)
         {
@@ -98,24 +100,23 @@ void ppm::read(const std::string &fname)
         }
         // dynamically create array based on header size
         // r/g/b are pointers to Arrays of pointers of unsigned char (1Byte) Arrays.
-        r.reserve(rows*cols);
-        g.reserve(rows*cols);
-        b.reserve(rows*cols);
+        r.reserve(size);
+        g.reserve(size);
+        b.reserve(size);
         // this char stores the read input byte
         char aux;
         // each r,g,b values come in that order
         for(int i=0; i<rows; i++) {
             for (int j = 0; j < cols; j++) {
-                int idx = i*cols + j;
                 // read 1 bit
                 in.read(&aux, 1);
-                r[idx] = ((double) aux);
+                r.push_back((double) aux);
                 // read 1 bit
                 in.read(&aux, 1);
-                g[idx] = ((double) aux);
+                g.push_back((double) aux);
                 // read 1 bit
                 in.read(&aux, 1);
-                b[idx] = ((double) aux);
+                b.push_back((double) aux);
             }
         }
 

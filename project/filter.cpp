@@ -10,7 +10,7 @@
 #include "ppm.h"
 
 
-Matrix2D gaussFilter(Matrix2D& img, int size, double sig)
+std::vector<double> gaussFilter(std::vector<double> &img, int size, double sig,const int N,const int M)
 {
 
     // define Gauss filter
@@ -28,42 +28,49 @@ Matrix2D gaussFilter(Matrix2D& img, int size, double sig)
     //normalize
     std::transform(gauss_filter.begin(), gauss_filter.end(), gauss_filter.begin(),
                    [&](auto elem)->double {return elem/sum;});
-    Matrix2D gaussianBlurredHorizontal = convolve1D(gauss_filter,  img);
-    Matrix2D gaussianBlurredVertical({gaussianBlurredHorizontal.shape()[1], gaussianBlurredHorizontal.shape()[0]});
+    std::vector<double> gaussianBlurredVertical;
+    gaussianBlurredVertical.resize(img.size());
+    std::vector<double> gaussianBlurredHorizontal;
+    gaussianBlurredHorizontal.resize(img.size());
     // transpose the matrix to avoid cache misses for 'vertical' access
-    transpose(gaussianBlurredHorizontal, gaussianBlurredVertical);
     // horizontal convolution on transposed matrix
     // equivalent to vertical convolution on original matrix
-    gaussianBlurredVertical = convolve1D(gauss_filter, img);
-    // transpose back to original shape
-    transpose(gaussianBlurredVertical, gaussianBlurredHorizontal);
 
-    return gaussianBlurredVertical;
+    transpose(img, gaussianBlurredVertical, N, M);
+
+    gaussianBlurredVertical = convolve1D(gauss_filter, gaussianBlurredVertical, M, N);
+    // transpose back to original shape
+    transpose(gaussianBlurredVertical, gaussianBlurredHorizontal, M, N);
+
+    gaussianBlurredHorizontal= convolve1D(gauss_filter, gaussianBlurredHorizontal, N, M);
+
+    return gaussianBlurredHorizontal;
 }
 
-Matrix2D sigmaFilter(Matrix2D& img, Matrix2D& blurred_image)
+//TODO: fix
+std::vector<double> sigmaFilter(std::vector<double> &img, std::vector<double> blurred_image)
 {
-    double epsilon = 0.00000000001;
+    double epsilon = 1e-10;
     double max_value = 255.0;
     int index = 0;
 
-    Matrix2D filteres_image = img;
+    std::vector<double> filteredImg = img;
 
     for(auto ele: img){
 
-        double divided = img[index]/blurred_image[index]+ epsilon;
+        double divided = ele/blurred_image[index]+ epsilon;
         double min_val = std::min(max_value, divided * max_value + epsilon);
         double gamma = 0.5 +(min_val/ max_value) * min_val * min_val / 100000;//65025;
         double res = (pow((min_val / max_value), (1/ (gamma + epsilon)))) * max_value;
-        filteres_image[index] = res;
+        filteredImg[index] = res;
         index++;
     }
 
 
-    return filteres_image;
+    return filteredImg;
 }
-
-Matrix2D meanFilter(Matrix2D& img, int size)
+/*
+std::vector<double> meanFilter(std::vector<double>& img, int size)
 {
 
     Matrix2D mean_filter({size, size});
@@ -77,12 +84,12 @@ Matrix2D meanFilter(Matrix2D& img, int size)
 
     return convolve(mean_filter,  img);
 }
+*/
 
-
-Matrix2D removeBackground(Matrix2D& img, Matrix2D& filtered_img)
+std::vector<double> removeBackground(std::vector<double>& img, std::vector<double> filtered_img)
 {
     int index = 0;
-    Matrix2D& clean_img = img;
+    std::vector<double> clean_img = img;
     for(auto elem: filtered_img) {
         if (elem == 255.0) {
             clean_img[index] = filtered_img[index];
