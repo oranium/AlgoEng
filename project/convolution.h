@@ -5,4 +5,5 @@
 #include "Matrix2D.h"
 #include "ppm.h"
 
-Matrix2D convolve(Matrix2D& filter, Matrix2D& img);
+std::vector<double> convolve(std::vector<double> filter, std::vector<double> img);
+std::vector<double> convolve1D(std::vector<double>& filter, std::vector<double>& img, int N, int M);

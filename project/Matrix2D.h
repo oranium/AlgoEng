@@ -131,21 +131,8 @@ public:
     {
         return m_nelem;
     }
-    std::array<double,2> minmax_element()
-    {
-        std::array<double,2> minmax{MAXFLOAT,0};
-        for(auto elem:m_data)
-        {
-            if(elem<minmax[0]){
-                minmax[0]=elem;
-            }
-            if(elem>minmax[1]){
-                minmax[1]=elem;
-            }
-        }
-        return minmax;
-    }
-
+    std::array<double,2> minmax_element();
+    std::vector<double> flat() {return m_data;}
     struct Iterator
     {
        using iterator_category = std::forward_iterator_tag;
@@ -192,4 +179,9 @@ private:
                          m_strides.rbegin() + 1,
                          std::multiplies<int>());
     }
+
+
+
 };
+void transpose(const std::vector<double>& src, std::vector<double>& dst, int N, int M);
+
