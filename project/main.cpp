@@ -35,13 +35,13 @@ int main(int argc, char *argv[]) {
     std::vector<double> g = gaussFilter(img.g,5,30, img.height, img.width);
     std::vector<double> b = gaussFilter(img.b, 5,30, img.height, img.width);
 
-    r = sigmaFilter(img.r, r, 65000);
-    g = sigmaFilter(img.g, g, 65000);
-    b = sigmaFilter(img.b, b, 65000);
+    r = sigmaFilter(img.r, r, 25000);
+    g = sigmaFilter(img.g, g, 25000);
+    b = sigmaFilter(img.b, b, 25000);
     ppm imgCvd(r, g, b, img.height, img.width);
 
     imgCvd.normalize();
     imgCvd.write(output);
-    std::cout << "Time taken: " << (clock() - tStart)/CLOCKS_PER_SEC << std::endl;
+    std::cout << "Time taken: " << (double)(clock() - tStart)*1000/CLOCKS_PER_SEC << " ms" <<  std::endl;
     return 0;
 }
