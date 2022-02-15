@@ -47,25 +47,24 @@ std::vector<double> gaussFilter(std::vector<double> &img, int size, double sig,c
     return gaussianBlurredHorizontal;
 }
 
-//TODO: fix
-std::vector<double> sigmaFilter(std::vector<double> &img, std::vector<double> blurred_image)
+
+
+std::vector<double> sigmaFilter(std::vector<double> &img, std::vector<double> &blurred_image, int contrast_constant)
 {
-    double epsilon = 1e-10;
-    double max_value = 255.0;
-    int index = 0;
+    double epsilon = 1e-5;
+    auto max_val = std::max_element (blurred_image.begin(), blurred_image.end());
 
-    std::vector<double> filteredImg = img;
 
-    for(auto ele: img){
-
-        double divided = ele/blurred_image[index]+ epsilon;
-        double min_val = std::min(max_value, divided * max_value + epsilon);
-        double gamma = 0.5 +(min_val/ max_value) * min_val * min_val / 100000;//65025;
-        double res = (pow((min_val / max_value), (1/ (gamma + epsilon)))) * max_value;
-        filteredImg[index] = res;
-        index++;
+    std::vector<double> filteredImg;
+    filteredImg.reserve(img.size());
+    for(int i=0; i<img.size(); i++){
+        
+        double divided = abs(img[i]/blurred_image[i]+ epsilon);
+        double min_val = std::min(*max_val, divided * *max_val + epsilon);
+        double gamma = 0.5 +(min_val/ *max_val) * min_val * min_val / contrast_constant;//65025;
+        double res = (pow((min_val / *max_val), (1/ (gamma + epsilon)))) * *max_val;
+        filteredImg.push_back(res);
     }
-
 
     return filteredImg;
 }
@@ -85,13 +84,26 @@ std::vector<double> meanFilter(std::vector<double>& img, int size)
     return convolve(mean_filter,  img);
 }
 */
+std::vector<double> thresholding(std::vector<double>& img, double threshold)
+{
+    int index = 0;
+    std::vector<double> threshold_img = img;
+    for(auto elem: img) {
+        if (elem > threshold) {
+            threshold_img[index] = 255.0;
+        }
+        index++;
+    }
+
+    return threshold_img;
+}
 
 std::vector<double> removeBackground(std::vector<double>& img, std::vector<double> filtered_img)
 {
     int index = 0;
     std::vector<double> clean_img = img;
     for(auto elem: filtered_img) {
-        if (elem == 255.0) {
+        if (elem < 255.0) {
             clean_img[index] = filtered_img[index];
         }
         index++;

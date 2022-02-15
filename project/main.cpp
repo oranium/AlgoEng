@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
 
     ppm img(path);
 
+    /*
     std::vector<double> convRT;
     convRT.resize(img.size);
     transpose(img.r, convRT, img.height, img.width);
@@ -58,15 +59,17 @@ int main(int argc, char *argv[]) {
     convB.resize(img.size);
     transpose(convBT, convB, img.width, img.height);
     convB = convolve1D(filter, convB, img.height, img.width);
+    */
 
-    std::vector<double> r_blur = gaussFilter(img.r, 5, 1, img.height, img.width);
-    std::vector<double> g_blur = gaussFilter(img.g,5,1, img.height, img.width);
-    std::vector<double> b_blur = gaussFilter(img.b, 5,1, img.height, img.width);
+    std::vector<double> r_blur = gaussFilter(img.r, 5, 30, img.height, img.width);
+    std::vector<double> g_blur = gaussFilter(img.g,5,30, img.height, img.width);
+    std::vector<double> b_blur = gaussFilter(img.b, 5,30, img.height, img.width);
 
-    std::vector<double> r = sigmaFilter(img.r, r_blur);
-    std::vector<double> g = sigmaFilter(img.g, g_blur);
-    std::vector<double> b = sigmaFilter(img.b, b_blur);
-    ppm imgCvd(r, g, b, img.height, img.width);
+    std::vector<double> r_sigma = sigmaFilter(img.r, r_blur, 100000);
+    std::vector<double> g_sigma = sigmaFilter(img.g, g_blur, 100000);
+    std::vector<double> b_sigma = sigmaFilter(img.b, b_blur, 100000);
+
+    ppm imgCvd(r_sigma, g_sigma, b_sigma, img.height, img.width);
 
     imgCvd.normalize();
     imgCvd.write(output);

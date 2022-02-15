@@ -166,20 +166,21 @@ void ppm::write(const std::string &fname)
 
 void ppm::normalize(int newMax)
 {
-    const auto [minR, maxR] = std::minmax_element(r.begin(), r.end());
-    const auto [minG, maxG] = std::minmax_element(g.begin(), g.end());
-    const auto [minB, maxB] = std::minmax_element(b.begin(), b.end());
+
+    auto minmaxR = std::minmax_element (r.begin(),r.end());
+    auto minmaxG = std::minmax_element (g.begin(),g.end());
+    auto minmaxB = std::minmax_element (b.begin(),b.end());
 
     std::transform(r.begin(), r.end(), r.begin(),
-       [&, minR=minR, maxR=maxR](double elem)->double
-        {return (newMax * (elem - *minR) / (*maxR - *minR));});
+       [& ](double elem)->double
+        {return (newMax * (elem - *minmaxR.first) / (*minmaxR.second - *minmaxR.first));});
 
-    std::transform(r.begin(), r.end(), r.begin(),
-                   [&, minG=minG, maxG=maxG](double elem)->double
-                   {return (newMax * (elem - *minG) / (*maxG - *minG));});
+    std::transform(g.begin(), g.end(), g.begin(),
+                   [& ](double elem)->double
+                   {return (newMax * (elem - *minmaxG.first) / (*minmaxG.second - *minmaxG.first));});
 
-    std::transform(r.begin(), r.end(), r.begin(),
-                   [&, minB=minB, maxB=maxB](double elem)->double
-                   {return (newMax * (elem - *minB) / (*maxB - *minB));});
+    std::transform(b.begin(), b.end(), b.begin(),
+                   [&](double elem)->double
+                   {return (newMax * (elem - *minmaxB.first) / (*minmaxB.second - *minmaxB.first));});
 }
 
