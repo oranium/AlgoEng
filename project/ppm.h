@@ -28,11 +28,10 @@ public:
     //number of pixels - necessary? - height*width
     unsigned int size;
 
-    ppm();
     // fill
-    ppm(const std::string &fname);
+    explicit ppm(const std::string &fname);
     // construct ppm from r g b channels
-    ppm(std::vector<double> r, std::vector<double> g, std::vector<double> b, int N, int M);
+    ppm(std::vector<double>& r, std::vector<double>& g, std::vector<double>& b, int N, int M);
     // write the ppm image
     void write(const std::string &fname);
     // read the ppm image

@@ -36,7 +36,7 @@ ppm::ppm(const std::string &fname)
     read(fname);
 }
 
-ppm::ppm(std::vector<double> r, std::vector<double> g, std::vector<double> b, const int N, const int M)
+ppm::ppm(std::vector<double>& r, std::vector<double>& g, std::vector<double>& b, const int N, const int M)
 {
     init();
     height = N;
@@ -110,13 +110,13 @@ void ppm::read(const std::string &fname)
             for (int j = 0; j < cols; j++) {
                 // read 1 bit
                 in.read(&aux, 1);
-                r.push_back((double) aux);
+                r.push_back(static_cast<unsigned char>(aux));
                 // read 1 bit
                 in.read(&aux, 1);
-                g.push_back((double) aux);
+                g.push_back(static_cast<unsigned char>(aux));
                 // read 1 bit
                 in.read(&aux, 1);
-                b.push_back((double) aux);
+                b.push_back(static_cast<unsigned char>(aux));
             }
         }
 
@@ -149,11 +149,11 @@ void ppm::write(const std::string &fname)
       {
           for(int j=0; j<cols; j++){
               //TODO: why is this casted to char instead of staying unsigned? AKA why is helper char
-              helper = static_cast<char>((int)std::round(r[i*cols+j]));
+              helper = static_cast<char>(std::round(r[i*cols+j]));
               out.write(&helper, 1);
-              helper = static_cast<char>((int)std::round(g[i*cols+j]));
+              helper = static_cast<char>(std::round(g[i*cols+j]));
               out.write(&helper, 1);
-              helper = static_cast<char>((int)std::round(b[i*cols+j]));
+              helper = static_cast<char>(std::round(b[i*cols+j]));
               out.write(&helper, 1);
           }
       }
