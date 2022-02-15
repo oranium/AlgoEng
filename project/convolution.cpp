@@ -67,7 +67,7 @@ std::vector<double> convolve1D(std::vector<double>& filter, std::vector<double>&
     std::vector<double>paddedImg;
     paddedImg.reserve(img.size() + sizePad + N * sizePad);
     std::vector<double> convolvedImg;
-    convolvedImg.resize(img.size());
+    convolvedImg.reserve(img.size());
     // create the padded image
     // we are zero padding
     for(int i=0; i<img.size()+1;i++)
@@ -87,8 +87,8 @@ std::vector<double> convolve1D(std::vector<double>& filter, std::vector<double>&
     {
             // avoid the padding
             int offset = (i/M) * sizePad;
-            convolvedImg[i] = std::inner_product((paddedImg.begin()+i+offset), (paddedImg.begin()+i+offset+filter.size())
-                                                     , filter.begin(), 0.0);
+            convolvedImg.push_back(std::inner_product((paddedImg.begin()+i+offset), (paddedImg.begin()+i+offset+filter.size())
+                                                     , filter.begin(), 0.0));
     }
     return convolvedImg;
 }
