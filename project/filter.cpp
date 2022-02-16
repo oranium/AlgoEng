@@ -86,27 +86,32 @@ std::vector<double> meanFilter(std::vector<double>& img, int size)
 */
 std::vector<double> thresholding(std::vector<double>& img, double threshold)
 {
-    int index = 0;
-    std::vector<double> threshold_img = img;
-    for(auto elem: img) {
-        if (elem > threshold) {
-            threshold_img[index] = 255.0;
+    std::vector<double> threshold_img;
+    threshold_img.reserve(img.size());
+    for(int i=0; i<img.size(); i++) {
+        if (img[i] > threshold) {
+            threshold_img.push_back(255.0);
         }
-        index++;
+        else
+        {
+            threshold_img.push_back(img[i]);
+        }
     }
-
     return threshold_img;
 }
 
-std::vector<double> removeBackground(std::vector<double>& img, std::vector<double> filtered_img)
+std::vector<double> removeBackground(std::vector<double>& img, std::vector<double>& filtered_img)
 {
-    int index = 0;
-    std::vector<double> clean_img = img;
-    for(auto elem: filtered_img) {
-        if (elem < 255.0) {
-            clean_img[index] = filtered_img[index];
+    std::vector<double> clean_img;
+    clean_img.reserve(img.size());
+    for(int i=0; i<img.size(); i++) {
+        if (img[i] < 255.0) {
+            clean_img.push_back(filtered_img[i]);
         }
-        index++;
+        else
+        {
+            clean_img.push_back(img[i]);
+        }
     }
     return clean_img;
 }
