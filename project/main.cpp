@@ -1,15 +1,10 @@
 //
 // Created by Oran on 01.02.22.
 //
-#include<array>
 #include<iostream>
-#include<string>
-#include<fstream>
-#include<sstream>
 #include<string>
 #include "ppm.h"
 #include "filter.h"
-#include "convolution.h"
 #include <random>
 
 int main(int argc, char *argv[]) {
