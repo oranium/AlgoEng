@@ -6,9 +6,10 @@
 #include "ppm.h"
 #include "filter.h"
 #include <random>
+#include <omp.h>
 
 int main(int argc, char *argv[]) {
-    clock_t tStart = clock();
+    clock_t tStart = omp_get_wtime();
     std::string path = argv[1];
     std::cout << "Removing background for image " << path << std::endl;
     std::string output;
@@ -37,6 +38,6 @@ int main(int argc, char *argv[]) {
 
     imgCvd.normalize();
     imgCvd.write(output);
-    std::cout << "Time taken: " << (double)(clock() - tStart)*1000/CLOCKS_PER_SEC << " ms" <<  std::endl;
+    std::cout << "Time taken: " << (omp_get_wtime() - tStart) <<  std::endl;
     return 0;
 }
