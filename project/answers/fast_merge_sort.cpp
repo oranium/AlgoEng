@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include <omp.h>
 #include "fast_merge_sort.h"
 //
 // Created by oran on 12/26/21.
@@ -41,10 +42,18 @@ void merge_sort_naive(int *arr, int n) { // slow merge sort
         const int size_a = n / 2;
         const int size_b = n - size_a;
 #pragma omp task if (size_a < 10000)
-                merge_sort_naive(arr, size_a); // recursive call
-                merge_sort_naive(arr + size_a, size_b); // recursive call
+                {
+                    merge_sort_naive(arr, size_a); // recursive call
+                }
+                merge_sort_naive(arr + size_a, size_b); // no task for the second call so the thread doesnt wait
             // don't start merging before sublists have been sorted
 #pragma omp taskwait
+        if(n < 8192) {
+            int c[n];
+            merge(arr, arr + size_a, c, size_a, size_b, n);
+            memcpy(arr, c, sizeof(int) * n);
+            return;
+        }
         int *c = new int[n]; // TODO: avoid using heap for small n
          merge(arr, arr + size_a, c, size_a, size_b, n);
          memcpy(arr, c, sizeof(int) * n);
@@ -56,3 +65,9 @@ void merge_sort_naive(int *arr, int n) { // slow merge sort
     }
 }
 
+void merge_sort_run(int *arr, int n)
+{
+#pragma omp parallel
+#pragma omp single nowait
+    merge_sort_naive(arr, n);
+}
