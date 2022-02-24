@@ -1,0 +1,19 @@
+Runtime for unoptimized program:
+    naive: 15.4344 seconds
+    std::sort: 10.2737 seconds
+Runtime with stack alloc:
+    naive: 14.4152 seconds
+    std::sort: 10.2954 seconds
+
+Runtime with task:
+    task: 26.7071 seconds
+
+Runtime with Insertion Sort and Stack alloc
+    naive: 12.2067 seconds
+    std::sort: 10.2812 seconds
+
+Runtime with added tasks
+    naive: 14.0208 seconds
+    std::sort: 10.2447 seconds
+
+
