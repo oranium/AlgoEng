@@ -1,0 +1,7 @@
+Runtime for unoptimized program:
+    naive: 22.7142 seconds
+    std::sort: 52.5743 seconds
+
+Runtime with task:
+    task: 26.7071 seconds
+

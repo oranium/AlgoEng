@@ -1,0 +1,13 @@
+/home/oran/Apps/CLion-2021.3.3/clion-2021.3.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/oran/Apps/CLion-2021.3.3/clion-2021.3.3/bin/ninja/linux/ninja -G Ninja /home/oran/master/ws21/algo_eng/AlgoEng/project/answers
+-- Configuring done
+CMake Error at CMakeLists.txt:7 (add_executable):
+  Cannot find source file:
+
+    fast_merge_sort.h
+
+
+CMake Error at CMakeLists.txt:7 (add_executable):
+  No SOURCES given to target: lec4
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.

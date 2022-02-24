@@ -1,0 +1,3 @@
+/home/oran/master/ws21/algo_eng/AlgoEng/project/answers/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/oran/master/ws21/algo_eng/AlgoEng/project/answers/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/oran/master/ws21/algo_eng/AlgoEng/project/answers/cmake-build-debug/CMakeFiles/lec4.dir
