@@ -1,9 +1,0 @@
-# ninja log v5
-0	323	1645717611813926483	CMakeFiles/lec4.dir/fast_merge_sort.cpp.o	fe416cbed779de11
-1	11	1645717611502926466	CMakeFiles/lec4.dir/mt_merging_parallel.cpp.o	f89953e3b5b81b17
-0	757	1645717612247926509	CMakeFiles/lec4.dir/main.cpp.o	e0390d164022a81a
-0	20	1645717819234938451	build.ninja	bc49c7c36ff5eff
-1	296	1645717819535938468	CMakeFiles/lec4.dir/fast_merge_sort.cpp.o	fe416cbed779de11
-0	741	1645717819980938494	CMakeFiles/lec4.dir/main.cpp.o	e0390d164022a81a
-1	686	1645717859136940753	CMakeFiles/lec4.dir/main.cpp.o	e0390d164022a81a
-687	750	1645717859199940757	lec4	7029d2bbeb4d8608
