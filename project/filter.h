@@ -2,15 +2,13 @@
 // Created by Bruno Reinhold on 09.02.22.
 //
 
-#ifndef PROJECT_FILTER_H
-#define PROJECT_FILTER_H
-
-#endif //PROJECT_FILTER_H
+#pragma once
 #include "Matrix2D.h"
+#include "aligned_allocator.h"
 
-std::vector<double> gaussFilter(std::vector<double>& img, int size, double sig, const int N, const int M);
-std::vector<double> sigmaFilter(std::vector<double>& img, std::vector<double> &blurred_image, int contrast_constant);
-std::vector<double> meanFilter(std::vector<double>& img, int size);
-std::vector<double> thresholding(std::vector<double>& img, double threshold);
-std::vector<double> removeBackground(std::vector<double>& img, std::vector<double>& filtered_img);
+aligned_vector<double> gaussFilter(aligned_vector<double>& img, int size, double sig, const int N, const int M);
+aligned_vector<double> sigmaFilter(aligned_vector<double>& img, aligned_vector<double> &blurred_image, int contrast_constant);
+aligned_vector<double> meanFilter(aligned_vector<double>& img, int size);
+aligned_vector<double> thresholding(aligned_vector<double>& img, double threshold);
+aligned_vector<double> removeBackground(aligned_vector<double>& img, aligned_vector<double>& filtered_img);
 

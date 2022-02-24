@@ -26,9 +26,9 @@ int main(int argc, char *argv[]) {
 
     ppm img(path);
 
-    std::vector<double> r = gaussFilter(img.r, 5, 30, img.height, img.width);
-    std::vector<double> g = gaussFilter(img.g,5,30, img.height, img.width);
-    std::vector<double> b = gaussFilter(img.b, 5,30, img.height, img.width);
+    aligned_vector<double> r = gaussFilter(img.r, 5, 30, img.height, img.width);
+    aligned_vector<double> g = gaussFilter(img.g,5,30, img.height, img.width);
+    aligned_vector<double> b = gaussFilter(img.b, 5,30, img.height, img.width);
 
     r = sigmaFilter(img.r, r, 25000);
     g = sigmaFilter(img.g, g, 25000);

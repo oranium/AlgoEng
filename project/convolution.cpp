@@ -58,15 +58,15 @@ std::vector<double> convolve(std::vector<double> filter, std::vector<double> img
     return convolvedImg;
 }
 */
-std::vector<double> convolve1D(std::vector<double>& filter, std::vector<double>& img, int N, int M)
+aligned_vector<double> convolve1D(aligned_vector<double> &filter, aligned_vector<double> &img, int N, int M)
 {
     // floor division
     // only square filters
     const int sizePad = std::floor(filter.size()/2);
     // reserve space so no reallocation happens on filling
-    std::vector<double>paddedImg;
+    aligned_vector<double>paddedImg;
     paddedImg.reserve(img.size() + sizePad + N * sizePad);
-    std::vector<double> convolvedImg;
+    aligned_vector<double> convolvedImg;
     convolvedImg.reserve(img.size());
     // create the padded image
     // we are zero padding

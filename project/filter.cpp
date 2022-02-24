@@ -10,11 +10,11 @@
 #include "ppm.h"
 
 
-std::vector<double> gaussFilter(std::vector<double> &img, int size, double sig,const int N,const int M)
+aligned_vector<double> gaussFilter(aligned_vector<double> &img, int size, double sig,const int N,const int M)
 {
 
     // define Gauss filter
-    std::vector<double> gauss_filter(size);
+    aligned_vector<double> gauss_filter(size);
 
     int half_size = floor(size/2);
     int r, s = half_size * sig * sig;
@@ -28,9 +28,9 @@ std::vector<double> gaussFilter(std::vector<double> &img, int size, double sig,c
     //normalize
     std::transform(gauss_filter.begin(), gauss_filter.end(), gauss_filter.begin(),
                    [&](auto elem)->double {return elem/sum;});
-    std::vector<double> gaussianBlurredVertical;
+    aligned_vector<double> gaussianBlurredVertical;
     gaussianBlurredVertical.resize(img.size());
-    std::vector<double> gaussianBlurredHorizontal;
+    aligned_vector<double> gaussianBlurredHorizontal;
     gaussianBlurredHorizontal.resize(img.size());
     // transpose the matrix to avoid cache misses for 'vertical' access
     // horizontal convolution on transposed matrix
@@ -49,13 +49,13 @@ std::vector<double> gaussFilter(std::vector<double> &img, int size, double sig,c
 
 
 
-std::vector<double> sigmaFilter(std::vector<double> &img, std::vector<double> &blurred_image, int contrast_constant)
+aligned_vector<double> sigmaFilter(aligned_vector<double> &img, aligned_vector<double> &blurred_image, int contrast_constant)
 {
     double epsilon = 1e-5;
     auto max_val = std::max_element (blurred_image.begin(), blurred_image.end());
 
 
-    std::vector<double> filteredImg;
+    aligned_vector<double> filteredImg;
     filteredImg.reserve(img.size());
     for(int i=0; i<img.size(); i++){
         
@@ -84,9 +84,9 @@ std::vector<double> meanFilter(std::vector<double>& img, int size)
     return convolve(mean_filter,  img);
 }
 */
-std::vector<double> thresholding(std::vector<double>& img, double threshold)
+aligned_vector<double> thresholding(aligned_vector<double>& img, double threshold)
 {
-    std::vector<double> threshold_img;
+    aligned_vector<double> threshold_img;
     threshold_img.reserve(img.size());
     for(int i=0; i<img.size(); i++) {
         if (img[i] > threshold) {
@@ -100,9 +100,9 @@ std::vector<double> thresholding(std::vector<double>& img, double threshold)
     return threshold_img;
 }
 
-std::vector<double> removeBackground(std::vector<double>& img, std::vector<double>& filtered_img)
+aligned_vector<double> removeBackground(aligned_vector<double>& img, aligned_vector<double>& filtered_img)
 {
-    std::vector<double> clean_img;
+    aligned_vector<double> clean_img;
     clean_img.reserve(img.size());
     for(int i=0; i<img.size(); i++) {
         if (img[i] < 255.0) {
