@@ -7,3 +7,4 @@ answers/
 *.txt
 scrap.*
 *.ppm
+build/
