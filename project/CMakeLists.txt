@@ -6,12 +6,34 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+# automatically build for release if no option given
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Built type" FORCE)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX MATCHES 1)
+    set(CXX_COMPILER_IS_GNU 1)
+else()
+    set(CXX_COMPILER_IS_GNU 0)
+endif()
+
 if(CMAKE_CXX_COMPILER_LOADED)
     message(STATUS "Compiler path: ${CMAKE_CXX_COMPILER}")
     message(STATUS "Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
     message(STATUS "Compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
     message(STATUS "Compiler is part of GCC: ${CMAKE_COMPILER_IS_GNUCXX}")
+    message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 endif()
+
+# possible compile options for GNU compiler
+if(CMAKE_CXX_COMPILER_ID MATCHES GNU)
+endif()
+
+# possible compile options for (apple)clang
+if(CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?Clang$")
+endif()
+
 find_package(OpenMP REQUIRED)
 # testing
 Include(FetchContent)
