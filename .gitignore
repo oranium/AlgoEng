@@ -4,6 +4,6 @@
 cmake-build-debug/
 .ipynb_checkpoints/
 answers/
-CMakeLists.txt
+*.txt
 scrap.*
 *.ppm
