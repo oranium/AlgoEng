@@ -12,15 +12,7 @@ aligned_vector<double> expected = {1,5,9,2,6,10,3,7,11,4,8,12};
 int N = 3;
 int M = 4;
 transpose(in, out, N, M);
-for(auto elem:out)
-{
-std::cout << elem << std::endl;
-}
-std::cout << std::endl;
-for(auto elem:expected)
-{
-std::cout << elem << std::endl;
-}
 
+//Check element-wise equality
 REQUIRE(out == expected );
 }
