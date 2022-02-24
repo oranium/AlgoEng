@@ -3,7 +3,6 @@
 //
 
 #include "Matrix2D.h"
-
 std::array<double, 2> Matrix2D::minmax_element()
 {
     std::array<double,2> minmax{MAXFLOAT,0};
@@ -23,10 +22,10 @@ std::array<double, 2> Matrix2D::minmax_element()
 /*
  * Store transpose of src in dst
  */
-void transpose(const std::vector<double>& src, std::vector<double>& dst, int N, int M)
+void transpose(const aligned_vector<double>& src, aligned_vector<double>& dst, int N, int M)
 {
     // transpose over
-    //#pragma omp parallel for default(none) shared(N, M, dst, src)
+    #pragma omp parallel for default(none) shared(N, M, dst, src)
     for(int n=0; n<N*M; n++)
     {
         int i = n / N;

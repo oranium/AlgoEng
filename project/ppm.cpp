@@ -36,7 +36,7 @@ ppm::ppm(const std::string &fname)
     read(fname);
 }
 
-ppm::ppm(std::vector<double>& r, std::vector<double>& g, std::vector<double>& b, const int N, const int M)
+ppm::ppm(aligned_vector<double>& r, aligned_vector<double>& g, aligned_vector<double>& b, const int N, const int M)
 {
     init();
     height = N;

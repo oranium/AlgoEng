@@ -8,13 +8,15 @@
 #include <valarray>
 #include <array>
 #include <iostream>
-
+#include "aligned_allocator.h"
 typedef std::array<int, 4> Slice;
+
+// so far only for doubles but still using template
 
 class Matrix2D
 {
 public:
-    Matrix2D(const std::vector<int>& shape)
+    explicit Matrix2D(const std::vector<int>& shape)
             : m_nelem(std::accumulate(shape.begin(), shape.end(),
                                       1, std::multiplies<int>()))
             , m_ndim(shape.size())
@@ -61,7 +63,7 @@ public:
      * Does not check for violations of memory access
      * Returns value so the local slice isn't lost
      */
-    const std::vector<double> operator[](Slice& indices) const
+    std::vector<double> operator[](Slice& indices) const
     {
         int startRow = indices[0];
         int endRow = indices[1];
@@ -183,5 +185,5 @@ private:
 
 
 };
-void transpose(const std::vector<double>& src, std::vector<double>& dst, int N, int M);
+void transpose(const aligned_vector<double>& src, aligned_vector<double>& dst, int N, int M);
 

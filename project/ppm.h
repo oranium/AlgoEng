@@ -6,7 +6,7 @@
 
 #pragma once
 #include "Matrix2D.h"
-
+#include "aligned_allocator.h"
 class ppm{
     void init();
 
@@ -15,9 +15,9 @@ class ppm{
 
 public:
     // r,g,b arrays for each channel
-    std::vector<double> r;
-    std::vector<double> g;
-    std::vector<double> b;
+    aligned_vector<double> r;
+    aligned_vector<double> g;
+    aligned_vector<double> b;
 
 
     //not the same as rows, cols?
@@ -31,7 +31,7 @@ public:
     // fill
     explicit ppm(const std::string &fname);
     // construct ppm from r g b channels
-    ppm(std::vector<double>& r, std::vector<double>& g, std::vector<double>& b, int N, int M);
+    ppm(aligned_vector<double>& r, aligned_vector<double>& g, aligned_vector<double>& b, int N, int M);
     // write the ppm image
     void write(const std::string &fname);
     // read the ppm image
