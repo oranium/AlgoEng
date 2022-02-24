@@ -19,17 +19,25 @@ int main(int argc, char *argv[]) {
     const int n = 100000000;
     std::vector<int> v = get_random_int_vector(n);
     std::vector<int> v_copy = v;
-
+    std::vector<int> v_naive = v;
+    std::vector<int> buffer(n);
     double start = omp_get_wtime();
-    merge_sort_naive(v.data(), n);
-    std::cout << "naive: " << omp_get_wtime() - start << " seconds" << std::endl;
+    merge_sort_run(v.data(), buffer.data(), n);
+    std::cout << "fast merge sort: " << omp_get_wtime() - start << " seconds" << std::endl;
 
     start = omp_get_wtime();
     std::sort(std::begin(v_copy), std::end(v_copy));
     std::cout << "std::sort: " << omp_get_wtime() - start << " seconds" << std::endl;
-
     if (v != v_copy) {
         std::cout << "sort implementation is buggy\n";
+    }
+
+
+    start = omp_get_wtime();
+    merge_sort_naive(v_naive.data(), n);
+    std::cout << "naive merge sort: " << omp_get_wtime() - start << " seconds" << std::endl;
+    if (v != v_copy) {
+        std::cout << "(naive) sort implementation is buggy\n";
     }
 }
 

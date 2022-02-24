@@ -5,6 +5,8 @@
 //
 // Created by oran on 12/26/21.
 //
+
+
 void merge(const int *__restrict__ a, const int *__restrict__ b,
                   int *__restrict__ c, const int a_size, const int b_size,
                   const int c_size) {
@@ -36,38 +38,60 @@ void insertion_sort(int *arr, int n)
     }
 }
 
-void merge_sort_naive(int *arr, int n) { // slow merge sort
+void merge_sort(int *arr, int *buffer, int n) { // slow merge sort
 
     if (n>32) {
         const int size_a = n / 2;
         const int size_b = n - size_a;
-#pragma omp task if (size_a < 10000)
-                {
-                    merge_sort_naive(arr, size_a); // recursive call
-                }
-                merge_sort_naive(arr + size_a, size_b); // no task for the second call so the thread doesnt wait
-            // don't start merging before sublists have been sorted
-#pragma omp taskwait
-        if(n < 8192) {
-            int c[n];
-            merge(arr, arr + size_a, c, size_a, size_b, n);
-            memcpy(arr, c, sizeof(int) * n);
-            return;
+#pragma omp task if (size_a > 10000)
+        {
+            merge_sort_helper(arr, buffer, size_a); // recursive call
         }
-        int *c = new int[n]; // TODO: avoid using heap for small n
-         merge(arr, arr + size_a, c, size_a, size_b, n);
-         memcpy(arr, c, sizeof(int) * n);
-         delete[](c);
-         }
+        // no task for the second call so the thread doesnt wait
+        merge_sort_helper(arr + size_a, buffer + size_a, size_b);
+// don't start merging before sublists have been sorted
+#pragma omp taskwait
+        merge(buffer, buffer + size_a, arr, size_a, size_b, n);
+    }
+    // avoid recursion overhead for small sublists
     else if(n>1)
     {
         insertion_sort(arr, n);
     }
 }
 
-void merge_sort_run(int *arr, int n)
+void merge_sort_helper(int *arr, int *buffer, int n)
+{
+    const int size_a = n / 2;
+    const int size_b = n - size_a;
+// i am not using final because i find this to be more idiomatic
+#pragma omp task if(size_a > 10000)
+    merge_sort(arr, buffer, size_a);
+    merge_sort(arr+size_a, buffer+size_a, size_b);
+#pragma omp taskwait
+    merge(arr, arr+size_a, buffer, size_a, size_b, n);
+}
+
+
+void merge_sort_run(int *arr, int *buffer, int n)
 {
 #pragma omp parallel
 #pragma omp single nowait
-    merge_sort_naive(arr, n);
+    merge_sort(arr, buffer, n);
 }
+
+// original impl. for comparison
+void merge_sort_naive(int *arr, int n) { // slow merge sort
+    if (n > 1) { // TODO: use insertion sort for small n
+        const int size_a = n / 2;
+        const int size_b = n - size_a;
+        // TODO: make next recursive call a task
+        merge_sort_naive(arr, size_a); // recursive call
+        merge_sort_naive(arr + size_a, size_b); // recursive call
+        // TODO: here should be a taskwait
+        int *c = new int[n]; // TODO: avoid using heap for small n
+         merge(arr, arr + size_a, c, size_a, size_b, n);
+         memcpy(arr, c, sizeof(int) * n);
+         delete[](c);
+         }
+    }

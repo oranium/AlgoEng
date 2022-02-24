@@ -11,4 +11,8 @@ void insertion_sort(int *arr, int n);
 
 void merge_sort_naive(int *arr, int n);
 
-void merge_sort_run(int *arr, int n);
+void merge_sort(int *arr, int *buffer, int n);
+
+void merge_sort_run(int *arr, int *buffer, int n);
+
+void merge_sort_helper(int *arr, int *buffer, int n);
