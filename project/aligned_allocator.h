@@ -11,7 +11,7 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstdio>
-
+#include <vector>
 
 template<typename T, std::size_t N = 16>
 class aligned_allocator {
