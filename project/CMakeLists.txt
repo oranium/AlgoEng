@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.14)
+project(scanEnhancer LANGUAGES CXX)
+project(scrap LANGUAGES CXX)
+project(test LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+find_package(OpenMP REQUIRED)
+# testing
+Include(FetchContent)
+
+# fetch catch2 from web for easy building
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.0.0-preview3
+)
+
+set(FETCHCONTENT_QUIET ON)
+FetchContent_MakeAvailable(Catch2)
+enable_testing()
+
+add_executable(scanEnhancer main.cpp convolution.cpp convolution.h ppm.cpp ppm.h Matrix2D.cpp Matrix2D.h
+                            filter.cpp filter.h aligned_allocator.h)
+
+add_executable(testEnhancer tests.cpp aligned_allocator.h Matrix2D.h Matrix2D.cpp)
+
+add_executable(scrap scrap.cpp convolution.cpp convolution.h ppm.cpp ppm.h Matrix2D.cpp Matrix2D.h
+        filter.cpp filter.h
+        aligned_allocator.h)
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(scanEnhancer PUBLIC OpenMP::OpenMP_CXX)
+    target_link_libraries(scrap PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
+target_link_libraries(testEnhancer PUBLIC Catch2::Catch2WithMain)
+
+#install(TARGETS scanEnhancer DESTINATION bin)
+#list(APPEND CPACK_GENERATOR "DEB")
+#set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Hans Wurst")
+#include(CPack)
