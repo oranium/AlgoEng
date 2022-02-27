@@ -54,9 +54,9 @@ add_executable(scanEnhancer main.cpp convolution.cpp convolution.h ppm.cpp ppm.h
 
 add_executable(testEnhancer tests.cpp aligned_allocator.h Matrix2D.h Matrix2D.cpp)
 
-add_executable(scrap scrap.cpp convolution.cpp convolution.h ppm.cpp ppm.h Matrix2D.cpp Matrix2D.h
-        filter.cpp filter.h
-        aligned_allocator.h)
+#add_executable(scrap scrap.cpp convolution.cpp convolution.h ppm.cpp ppm.h Matrix2D.cpp Matrix2D.h
+#        filter.cpp filter.h
+#        aligned_allocator.h)
 
 if(OpenMP_CXX_FOUND)
     target_link_libraries(scanEnhancer PUBLIC OpenMP::OpenMP_CXX)
@@ -65,7 +65,7 @@ endif()
 
 target_link_libraries(testEnhancer PUBLIC Catch2::Catch2WithMain)
 
-#install(TARGETS scanEnhancer DESTINATION bin)
-#list(APPEND CPACK_GENERATOR "DEB")
-#set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Hans Wurst")
 #include(CPack)
+install(TARGETS scanEnhancer DESTINATION bin)
+#list(APPEND CPACK_GENERATOR "DEB")
+#set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Aron Gaden, Bruno Reinhold")
