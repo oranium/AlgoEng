@@ -33,3 +33,11 @@ void transpose(const aligned_vector<double>& src, aligned_vector<double>& dst, i
         dst[n] = src[M * j + i];
     }
 }
+
+void normalize(aligned_vector<double>& vec, double newMax)
+{
+    auto minmax = std::minmax_element (vec.begin(),vec.end());
+        std::transform(vec.begin(), vec.end(), vec.begin(),
+                       [& ](double elem)->double
+                       {return (newMax * (elem - *minmax.first) / (*minmax.second - *minmax.first));});
+}

@@ -187,3 +187,4 @@ private:
 };
 void transpose(const aligned_vector<double>& src, aligned_vector<double>& dst, int N, int M);
 
+void normalize(aligned_vector<double>, double newMax=255);
