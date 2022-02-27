@@ -36,7 +36,7 @@ ppm::ppm(const std::string &fname)
     read(fname);
 }
 
-ppm::ppm(aligned_vector<double>& r, aligned_vector<double>& g, aligned_vector<double>& b, const int N, const int M)
+ppm::ppm(aligned_vector<double>& r1, aligned_vector<double>& g1, aligned_vector<double>& b1, const int N, const int M)
 {
     init();
     height = N;
@@ -45,9 +45,9 @@ ppm::ppm(aligned_vector<double>& r, aligned_vector<double>& g, aligned_vector<do
     cols = width;
     size = height * width;
     // clang-tidy told me std::move is cheaper than copying
-    this->r = std::move(r);
-    this->g = std::move(g);
-    this->b = std::move(b);
+    r  = r1;
+    g = g1;
+    b = b1;
     //already defined in init()
     //maxIntensity = 255;
 }
