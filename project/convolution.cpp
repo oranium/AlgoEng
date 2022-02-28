@@ -70,7 +70,7 @@ aligned_vector<double> convolve1D(aligned_vector<double> &filter, aligned_vector
     convolvedImg.reserve(img.size());
     // create the padded image
     // we are zero padding
-    for(int i=0; i<img.size()+1;i++)
+    for(int i=0; i<img.size();i++)
     {
         if(i%M==0)
         {
@@ -83,7 +83,7 @@ aligned_vector<double> convolve1D(aligned_vector<double> &filter, aligned_vector
     }
 
     // apply convolution
-    #pragma omp parallel for default(none) shared(img, convolvedImg, sizePad, M, paddedImg, filter)
+    //pragma omp parallel for default(none) shared(img, convolvedImg, sizePad, M, paddedImg, filter)
     for (int i=0; i<img.size(); ++i)
     {
             // avoid the padding
