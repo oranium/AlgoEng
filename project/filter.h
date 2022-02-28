@@ -10,5 +10,5 @@ aligned_vector<double> gaussFilter(aligned_vector<double>& img, int size, double
 aligned_vector<double> sigmaFilter(aligned_vector<double>& img, aligned_vector<double> &blurred_image, int contrast_constant);
 aligned_vector<double> meanFilter(aligned_vector<double>& img, int size);
 aligned_vector<double> thresholding(aligned_vector<double>& img, double threshold);
-aligned_vector<double> removeBackground(aligned_vector<double>& img, aligned_vector<double>& filtered_img);
+aligned_vector<double> removeBackground(aligned_vector<double>& filtered_img, aligned_vector<double>& img_mask);
 

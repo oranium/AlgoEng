@@ -100,17 +100,17 @@ aligned_vector<double> thresholding(aligned_vector<double>& img, double threshol
     return threshold_img;
 }
 
-aligned_vector<double> removeBackground(aligned_vector<double>& img, aligned_vector<double>& filtered_img)
+aligned_vector<double> removeBackground(aligned_vector<double>& filtered_img, aligned_vector<double>& img_mask)
 {
     aligned_vector<double> clean_img;
-    clean_img.reserve(img.size());
-    for(int i=0; i<img.size(); i++) {
-        if (img[i] < 255.0) {
+    clean_img.reserve(img_mask.size());
+    for(int i=0; i<img_mask.size(); i++) {
+        if (img_mask[i] < 255.0) {
             clean_img.push_back(filtered_img[i]);
         }
         else
         {
-            clean_img.push_back(img[i]);
+            clean_img.push_back(img_mask[i]);
         }
     }
     return clean_img;
