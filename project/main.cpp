@@ -36,9 +36,9 @@ int main(int argc, char *argv[]) {
     b = gaussFilter(img.b, 15, 30, img.height, img.width);
 
     // contrast filter
-    r = sigmaFilter(img.r, r, 100000);
-    g = sigmaFilter(img.g, g, 100000);
-    b = sigmaFilter(img.b, b, 100000);
+    r = sigmaFilter(img.r, r, 150000);
+    g = sigmaFilter(img.g, g, 150000);
+    b = sigmaFilter(img.b, b, 150000);
     normalize(r);
     normalize(g);
     normalize(b);
@@ -50,9 +50,9 @@ int main(int argc, char *argv[]) {
     aligned_vector<double> gray_blur, gray_mask;
     gray_blur = gaussFilter(gray, 15, 30, img.height, img.width);
     // threshold mask
-    aligned_vector<double> r_mask = thresholding(r_blur2, 240);
-    aligned_vector<double> g_mask = thresholding(g_blur2, 240);
-    aligned_vector<double> b_mask = thresholding(b_blur2, 240);
+    aligned_vector<double> r_mask = thresholding(r_blur2, 247);
+    aligned_vector<double> g_mask = thresholding(g_blur2, 247);
+    aligned_vector<double> b_mask = thresholding(b_blur2, 247);
     gray_mask = thresholding(gray_blur, 240);
     // white background
     r = removeBackground(r, r_mask);

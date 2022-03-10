@@ -88,7 +88,7 @@ aligned_vector<double> removeBackground(aligned_vector<double>& filtered_img, al
     clean_img.resize(img_mask.size());
 #pragma omp parallel for default(none) shared(img_mask, clean_img, filtered_img)
     for(int i=0; i<img_mask.size(); i++) {
-        bool above_threshold = img_mask[i] > 255.0;
+        bool above_threshold = img_mask[i] >= 255.0;
         clean_img[i] = above_threshold * img_mask[i] + (!above_threshold) * filtered_img[i];
     }
     return clean_img;
