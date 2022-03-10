@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "Matrix2D.h"
+#include "matrix_utils.h"
 #include "aligned_allocator.h"
 
 aligned_vector<double> gaussFilter(aligned_vector<double>& img, int size, double sig, const int N, const int M);

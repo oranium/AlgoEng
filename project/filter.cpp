@@ -6,7 +6,7 @@
 
 #include "filter.h"
 #include "convolution.h"
-#include "Matrix2D.h"
+#include "matrix_utils.h"
 #include "ppm.h"
 
 

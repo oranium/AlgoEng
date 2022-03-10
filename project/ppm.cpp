@@ -8,8 +8,10 @@
 #include <exception>
 #include <algorithm> // std::minmax_element
 #include <utility>
+#include <valarray> //std::round ??
+#include <array>
 #include "ppm.h"
-#include "Matrix2D.h"
+#include "matrix_utils.h"
 
 // based on https://github.com/sol-prog/Perlin_Noise/blob/master/ppm.h
 // working

@@ -5,7 +5,7 @@
 // but we use an array for the values to make manipulation more efficient
 
 #pragma once
-#include "Matrix2D.h"
+#include "matrix_utils.h"
 #include "aligned_allocator.h"
 class ppm{
     void init();

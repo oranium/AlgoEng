@@ -2,18 +2,19 @@
 // Created by Oran on 03.02.22.
 //
 
-#include "convolution.h"
-#include <math.h>
+#include <cmath>
 #include <iostream>
+#include <numeric>
+#include "convolution.h"
 #include "ppm.h"
-#include "Matrix2D.h"
+#include "matrix_utils.h"
 
 template<class T>
 void fill_pad(aligned_vector<T> &paddedImg, aligned_vector<T> &img, int sizePad, int N, int M)
 {
     aligned_vector<double > pad(sizePad);
     std::fill(pad.begin(), pad.end(), 255.0);
-    for(int i=0; i<N*M;i++)
+    for(int i=0; i<(img.size())+1;i++)
     {
         if(i%M==0)
         {
