@@ -13,7 +13,7 @@ template<class T>
 void fill_pad(aligned_vector<T> &paddedImg, aligned_vector<T> &img, int sizePad, int N, int M)
 {
     aligned_vector<double > pad(sizePad);
-    std::fill(pad.begin(), pad.end(), 255.0);
+    std::fill(pad.begin(), pad.end(), 0);
     for(int i=0; i<(img.size())+1;i++)
     {
         if(i%M==0)
