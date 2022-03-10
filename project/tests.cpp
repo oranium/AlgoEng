@@ -10,6 +10,8 @@
 #include "convolution.h"
 #include <catch2/catch_test_macros.hpp>
 #include "ppm.h"
+#include<iostream>
+
 
 TEST_CASE( "Transpose is correct", "[transpose]" ) {
 aligned_vector<double> in = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
@@ -25,25 +27,26 @@ REQUIRE(out == expected );
 
 TEST_CASE("Gaussian blur test"){
 
-    aligned_vector<double> img = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    aligned_vector<double> blurred_img = {255, 255, 255, 255, 255, 0, 254, 33, 0, 10, 255, 255};
-    aligned_vector<double> expected = {255, 255, 255, 255, 255, 6, 7, 8, 9, 10, 255, 255};
+    aligned_vector<double> img_test = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    aligned_vector<double> expected = { 0.16, 0.2, 0.2444444444, 0.2933333333, 0.3466666667, 0.3466666667, 0.3466666667, 0.3466666667, 0.3422222222, 0.3333333333, 0.32, 0.3022222222 };
 
-    aligned_vector<double> out(img.size());
+    aligned_vector<double> out(img_test.size());
 
-    out = gaussFilter(img, blurred_img);
+    out = gaussFilter(img_test, 15, 30, 12, 1);
+
+
     REQUIRE(out == expected);
 }
 
 TEST_CASE("custom contrast filter test"){
 
     aligned_vector<double> img = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    aligned_vector<double> blurred_img = {255, 255, 255, 255, 255, 0, 254, 33, 0, 10, 255, 255};
-    aligned_vector<double> expected = {255, 255, 255, 255, 255, 6, 7, 8, 9, 10, 255, 255};
+    aligned_vector<double> blurred_img = {0.16, 0.2, 0.244444, 0.293333, 0.346667, 0.346667, 0.346667, 0.346667, 0.342222, 0.333333, 0.32, 0.302222};;
+    aligned_vector<double> expected = {0.346667, 0.346667, 0.346667, 0.346667, 0.346667, 0.346667, 0.346667, 0.346667, 0.346667, 0.346667, 0.346667, 0.346667};
 
     aligned_vector<double> out(img.size());
 
-    out = sigmaFilter(img, blurred_img);
+    out = sigmaFilter(img, blurred_img, 100000);
     REQUIRE(out == expected);
 }
 
@@ -53,6 +56,7 @@ TEST_CASE("thresholding works correctly"){
     aligned_vector<double> expected = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 255, 255};
 
     out = thresholding(in, 10);
+
     REQUIRE(out == expected);
 }
 
