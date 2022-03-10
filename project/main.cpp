@@ -30,35 +30,35 @@ int main(int argc, char *argv[]) {
 
     aligned_vector<double> r, g, b;
 
-        r = gaussFilter(img.r, 15, 30, img.height, img.width);
+    // Gaussian Filter
+    r = gaussFilter(img.r, 15, 30, img.height, img.width);
+    g = gaussFilter(img.g, 15, 30, img.height, img.width);
+    b = gaussFilter(img.b, 15, 30, img.height, img.width);
 
-        g = gaussFilter(img.g, 15, 30, img.height, img.width);
-
-        b = gaussFilter(img.b, 15, 30, img.height, img.width);
     // contrast filter
-        r = sigmaFilter(img.r, r, 100000);
-
-        g = sigmaFilter(img.g, g, 100000);
-
-        b = sigmaFilter(img.b, b, 100000);
+    r = sigmaFilter(img.r, r, 100000);
+    g = sigmaFilter(img.g, g, 100000);
+    b = sigmaFilter(img.b, b, 100000);
     normalize(r);
     normalize(g);
     normalize(b);
 
     // blurring contrast image
+    aligned_vector<double> r_blur2 = gaussFilter(r, 15, 30, img.height, img.width);
+    aligned_vector<double> g_blur2 = gaussFilter(g,15,30, img.height, img.width);
+    aligned_vector<double> b_blur2 = gaussFilter(b, 15,30, img.height, img.width);
     aligned_vector<double> gray_blur, gray_mask;
     gray_blur = gaussFilter(gray, 15, 30, img.height, img.width);
     // threshold mask
+    aligned_vector<double> r_mask = thresholding(r_blur2, 240);
+    aligned_vector<double> g_mask = thresholding(g_blur2, 240);
+    aligned_vector<double> b_mask = thresholding(b_blur2, 240);
     gray_mask = thresholding(gray_blur, 240);
     // white background
-    r = removeBackground(r, gray_mask);
-
-    g = removeBackground(g, gray_mask);
-
-    b = removeBackground(b, gray_mask);
+    r = removeBackground(r, r_mask);
+    g = removeBackground(g, g_mask);
+    b = removeBackground(b, b_mask);
     ppm imgCvd(r, g, b, img.height, img.width);
-
-    imgCvd.normalize();
     imgCvd.write(output);
     std::cout << "Removed background in  " << (omp_get_wtime() - tStart) <<  " seconds" << std::endl;
     return 0;
