@@ -1,16 +1,18 @@
 //
 // Created by oran on 2/24/22.
 //
-#define PAD_VAL 255
+#define PAD_VAL 0
+
+#include <cmath>
+#include <numeric>
+#include "convolution.h"
+#include <catch2/catch_test_macros.hpp>
+#include<iostream>
 
 #include "aligned_allocator.h"
 #include "filter.h"
 #include "matrix_utils.h"
-#include <cmath>
-#include "convolution.h"
-#include <catch2/catch_test_macros.hpp>
 #include "ppm.h"
-#include<iostream>
 
 
 TEST_CASE( "Transpose is correct", "[transpose]" ) {
@@ -33,9 +35,10 @@ TEST_CASE("Gaussian blur test"){
     aligned_vector<double> out(img_test.size());
 
     out = gaussFilter(img_test, 15, 30, 12, 1);
-
-
-    REQUIRE(out == expected);
+    std::transform(out.begin(), out.end(), expected.begin(), out.begin(),
+                   std::minus<int>());
+    auto diff = std::reduce(out.begin(), out.end());
+    REQUIRE(diff<0.01);
 }
 
 TEST_CASE("custom contrast filter test"){
@@ -87,6 +90,9 @@ aligned_vector<double> expected = {PAD_VAL+1+2, 1+2+3, 2+3+4, 3+4+PAD_VAL,
 std::transform(expected.begin(), expected.end(), expected.begin(),
 [&](double elem)->double
 {return (elem/3.0);});
+std::transform(out.begin(), out.end(), expected.begin(), out.begin(),
+           std::minus<>());
+auto diff = std::reduce(out.begin(), out.end());
 
-REQUIRE(out == expected );
+REQUIRE(diff<0.01);
 }
