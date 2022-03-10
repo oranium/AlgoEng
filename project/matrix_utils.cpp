@@ -3,6 +3,7 @@
 //
 
 #include "matrix_utils.h"
+#include <algorithm>
 /*
  * Store transpose of src in dst
  */
