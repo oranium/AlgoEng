@@ -2,62 +2,28 @@
 // Created by Oran on 03.02.22.
 //
 
-#include "convolution.h"
-#include <math.h>
+#include <cmath>
 #include <iostream>
+#include <numeric>
+#include "convolution.h"
 #include "ppm.h"
-#include "Matrix2D.h"
-/*
-std::vector<double> convolve(std::vector<double> filter, std::vector<double> img)
+#include "matrix_utils.h"
+
+template<class T>
+void fill_pad(aligned_vector<T> &paddedImg, aligned_vector<T> &img, int sizePad, int N, int M)
 {
-    // floor division
-    // only square filters
-    const int dimFilter = filter.size();
-    const int sizePad = std::floor(filter.size()/2);
-    const int rowsPad = img.size() + 2*sizePad;
-    std::vector<double> paddedImg(rowsPad);
-    std::vector<double> convolvedImg(img.size());
-
-    // create the padded image
-    // we are zero padding
-    // borders along the rows
-    //std::fill(paddedImg.begin(), paddedImg.end(), 0);
-    // create the padded image
-    // we are zero padding
-    for (int i=0; i<sizePad;i++)
+    aligned_vector<double > pad(sizePad);
+    std::fill(pad.begin(), pad.end(), 0);
+    for(int i=0; i<(img.size())+1;i++)
     {
-        paddedImg[i] = 0;
-    }
-    int idx = sizePad;
-    for (auto elem:img)
-    {
-        paddedImg[idx] = elem;
-        ++idx;
-    }
-    for (int i=0; i<sizePad;i++)
-    {
-        paddedImg[paddedImg.size() - i] = 0;
-    }
-    // apply convolution
-    for (int i=0; i<img.shape()[0]; ++i)
-    {
-        for (int j=0; j<img.shape()[1]; ++j)
+        if(i%M==0)
         {
-            Slice slice{i,i+dimFilter, j,j+dimFilter};
-            std::vector<double> imageSlice = paddedImg[slice];
-            double newVal = std::inner_product(imageSlice.begin(), imageSlice.end(), filter.begin(), 0);
-            /*
-            for(int i=0;i<imageSlice.size();i++)
-            {
-                newVal += imageSlice.at(i) * filter[i];
-            }
-
-            convolvedImg[{i,j}] = newVal;
+            paddedImg.insert(std::end(paddedImg), std::begin(pad), std::end(pad));
         }
+        paddedImg.push_back(img[i]);
     }
-    return convolvedImg;
 }
-*/
+
 aligned_vector<double> convolve1D(aligned_vector<double> &filter, aligned_vector<double> &img, int N, int M)
 {
     // floor division
@@ -67,30 +33,20 @@ aligned_vector<double> convolve1D(aligned_vector<double> &filter, aligned_vector
     aligned_vector<double>paddedImg;
     paddedImg.reserve(img.size() + sizePad + N * sizePad);
     aligned_vector<double> convolvedImg;
-    convolvedImg.reserve(img.size());
+    convolvedImg.resize(img.size());
     // create the padded image
-    // we are zero padding
-    for(int i=0; i<img.size();i++)
-    {
-        if(i%M==0)
-        {
-            for(int j=0; j<sizePad; j++)
-            {
-                paddedImg.push_back(0);
-            }
-        }
-        paddedImg.push_back(img[i]);
-    }
+    // we are 255 padding because we assume white backgrounds/scanned paper
+    fill_pad(paddedImg, img, sizePad, N, M);
 
     // apply convolution
-    //pragma omp parallel for default(none) shared(img, convolvedImg, sizePad, M, paddedImg, filter)
+#pragma omp parallel for default(none) shared(img, convolvedImg, sizePad, M, paddedImg, filter) if(img.size() > 100000)
     for (int i=0; i<img.size(); ++i)
     {
             // avoid the padding
             int offset = (i/M) * sizePad;
-            convolvedImg.push_back(std::inner_product((paddedImg.begin()+i+offset), (paddedImg.begin()+i+offset+filter.size())
-                                                     , filter.begin(), 0.0));
+            double res = std::transform_reduce((paddedImg.begin()+i+offset), (paddedImg.begin()+i+offset+filter.size())
+                    , filter.begin(), 0.0);
+            convolvedImg[i] = res;
     }
     return convolvedImg;
 }
-

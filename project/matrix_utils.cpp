@@ -2,21 +2,8 @@
 // Created by Oran on 11.02.22.
 //
 
-#include "Matrix2D.h"
-std::array<double, 2> Matrix2D::minmax_element() {
-    std::array<double, 2> minmax{MAXFLOAT, 0};
-    for (auto elem: m_data) {
-        if (elem < minmax[0]) {
-            minmax[0] = elem;
-        }
-        if (elem > minmax[1]) {
-            minmax[1] = elem;
-
-        }
-        return minmax;
-    }
-}
-
+#include "matrix_utils.h"
+#include <algorithm>
 /*
  * Store transpose of src in dst
  */

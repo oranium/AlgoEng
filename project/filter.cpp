@@ -6,7 +6,7 @@
 
 #include "filter.h"
 #include "convolution.h"
-#include "Matrix2D.h"
+#include "matrix_utils.h"
 #include "ppm.h"
 
 
@@ -56,46 +56,28 @@ aligned_vector<double> sigmaFilter(aligned_vector<double> &img, aligned_vector<d
 
 
     aligned_vector<double> filteredImg;
-    filteredImg.reserve(img.size());
+    filteredImg.resize(img.size());
+#pragma omp parallel for default(none) shared(img, blurred_image, filteredImg, max_val, epsilon, contrast_constant)
     for(int i=0; i<img.size(); i++){
-        
-        double divided = abs(img[i]/blurred_image[i]+ epsilon);
+        double divided = abs(img[i]/(blurred_image[i] + epsilon));
         double min_val = std::min(*max_val, divided * *max_val + epsilon);
         double gamma = 0.5 +(min_val/ *max_val) * min_val * min_val / contrast_constant;//65025;
         double res = (pow((min_val / *max_val), (1/ (gamma + epsilon)))) * *max_val;
-        filteredImg.push_back(res);
+        filteredImg[i] = res;
     }
 
     return filteredImg;
 }
-/*
-std::vector<double> meanFilter(std::vector<double>& img, int size)
-{
 
-    Matrix2D mean_filter({size, size});
-    double filter_size;
-    int i = 0 ;
-    for(auto elem:mean_filter)
-    {
-        mean_filter[i] = 1.0/filter_size;
-        i++;
-    }
 
-    return convolve(mean_filter,  img);
-}
-*/
 aligned_vector<double> thresholding(aligned_vector<double>& img, double threshold)
 {
     aligned_vector<double> threshold_img;
-    threshold_img.reserve(img.size());
+    threshold_img.resize(img.size());
+#pragma omp parallel for default(none) shared(img, threshold, threshold_img)
     for(int i=0; i<img.size(); i++) {
-        if (img[i] > threshold) {
-            threshold_img.push_back(255.0);
-        }
-        else
-        {
-            threshold_img.push_back(img[i]);
-        }
+        bool above_th = img[i] > threshold;
+        threshold_img[i] = above_th * 255.0 + (!above_th) * img[i];
     }
     return threshold_img;
 }
@@ -103,15 +85,11 @@ aligned_vector<double> thresholding(aligned_vector<double>& img, double threshol
 aligned_vector<double> removeBackground(aligned_vector<double>& filtered_img, aligned_vector<double>& img_mask)
 {
     aligned_vector<double> clean_img;
-    clean_img.reserve(img_mask.size());
+    clean_img.resize(img_mask.size());
+#pragma omp parallel for default(none) shared(img_mask, clean_img, filtered_img)
     for(int i=0; i<img_mask.size(); i++) {
-        if (img_mask[i] < 255.0) {
-            clean_img.push_back(filtered_img[i]);
-        }
-        else
-        {
-            clean_img.push_back(img_mask[i]);
-        }
+        bool above_threshold = img_mask[i] > 255.0;
+        clean_img[i] = above_threshold * img_mask[i] + (!above_threshold) * filtered_img[i];
     }
     return clean_img;
 }

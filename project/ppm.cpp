@@ -8,8 +8,10 @@
 #include <exception>
 #include <algorithm> // std::minmax_element
 #include <utility>
+#include <valarray> //std::round ??
+#include <array>
 #include "ppm.h"
-#include "Matrix2D.h"
+#include "matrix_utils.h"
 
 // based on https://github.com/sol-prog/Perlin_Noise/blob/master/ppm.h
 // working
@@ -20,16 +22,7 @@ void ppm::init(){
     // 1 Byte channel
     maxIntensity= 255;
 }
-/*
-ppm::ppm(){
-    this->r = Matrix2D({0, 0});
-    this->g = Matrix2D({0, 0});
-    this->b = Matrix2D({0, 0});
 
-    init();
-
-}
-*/
 ppm::ppm(const std::string &fname)
 {
     init();
@@ -137,25 +130,28 @@ void ppm::write(const std::string &fname)
     std::ofstream out(fname.c_str(), std::ios::out | std::ios::binary);
     if(out.is_open())
     {
-      out << "P6\n";
-      out << width;
-      out << " ";
-      out << height << '\n';
-      out << maxIntensity << '\n';
+        // string lookup table for 0-255
+        std::array<char, 256> lookup{};
+        for(int i=0;i<256;++i){ lookup[i]=static_cast<char>(i);}
+        out << "P6\n" << width << " " << height << '\n' << maxIntensity << '\n';
 
       // this char stores the output byte to be written
       char helper;
-      for(int i=0; i<rows; i++)
+#pragma omp parallel default(none) shared(helper, out, lookup, std::cout)
       {
-          for(int j=0; j<cols; j++){
-              //TODO: why is this casted to char instead of staying unsigned? AKA why is helper char
-              helper = static_cast<char>(std::round(r[i*cols+j]));
-              out.write(&helper, 1);
-              helper = static_cast<char>(std::round(g[i*cols+j]));
-              out.write(&helper, 1);
-              helper = static_cast<char>(std::round(b[i*cols+j]));
-              out.write(&helper, 1);
-          }
+            std::string valBuffer;
+            valBuffer.reserve(cols * 12);
+#pragma omp for schedule(dynamic) ordered
+            for (int i = 0; i < height; i++) {
+                valBuffer.clear();
+                for (int j = 0; j < width; j++) {
+                    valBuffer += (lookup[std::round(r[i * width + j])]);
+                    valBuffer += (lookup[std::round(g[i * width + j])]);
+                    valBuffer += (lookup[std::round(b[i * width + j])]);
+                }
+#pragma omp ordered
+                out << valBuffer;
+            }
       }
     }else
     {
