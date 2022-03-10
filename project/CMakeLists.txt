@@ -54,7 +54,8 @@ enable_testing()
 add_executable(scanEnhancer main.cpp convolution.cpp convolution.h ppm.cpp ppm.h matrix_utils.cpp matrix_utils.h
                             filter.cpp filter.h aligned_allocator.h)
 
-add_executable(testEnhancer tests.cpp aligned_allocator.h matrix_utils.h matrix_utils.cpp)
+add_executable(testEnhancer tests.cpp convolution.cpp convolution.h ppm.cpp ppm.h matrix_utils.cpp matrix_utils.h
+        filter.cpp filter.h aligned_allocator.h)
 
 if(OpenMP_CXX_FOUND)
     target_link_libraries(scanEnhancer PUBLIC OpenMP::OpenMP_CXX)

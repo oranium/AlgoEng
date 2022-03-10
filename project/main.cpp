@@ -30,17 +30,17 @@ int main(int argc, char *argv[]) {
 
     aligned_vector<double> r, g, b;
 
-        r = gaussFilter(img.r, 15, 30, img.height, img.width);
+    r = gaussFilter(img.r, 15, 30, img.height, img.width);
 
-        g = gaussFilter(img.g, 15, 30, img.height, img.width);
+    g = gaussFilter(img.g, 15, 30, img.height, img.width);
 
-        b = gaussFilter(img.b, 15, 30, img.height, img.width);
+    b = gaussFilter(img.b, 15, 30, img.height, img.width);
     // contrast filter
-        r = sigmaFilter(img.r, r, 100000);
+    r = sigmaFilter(img.r, r, 100000);
 
-        g = sigmaFilter(img.g, g, 100000);
+    g = sigmaFilter(img.g, g, 100000);
 
-        b = sigmaFilter(img.b, b, 100000);
+    b = sigmaFilter(img.b, b, 100000);
     normalize(r);
     normalize(g);
     normalize(b);
@@ -52,9 +52,7 @@ int main(int argc, char *argv[]) {
     gray_mask = thresholding(gray_blur, 240);
     // white background
     r = removeBackground(r, gray_mask);
-
     g = removeBackground(g, gray_mask);
-
     b = removeBackground(b, gray_mask);
     ppm imgCvd(r, g, b, img.height, img.width);
 
